@@ -1,3 +1,4 @@
+import { DEFAULT_INSTITUTION_COLOR, defaultAcronym } from '../domain/institution';
 import type { Database } from '../domain/models';
 import { initialDatabase } from './initialDatabase';
 export const DATABASE_KEY = 'vercia.database.v2';
@@ -20,6 +21,18 @@ export function loadDatabase(): Database {
       )
     )
       throw Error();
+    // Extend existing institutions without resetting local records.
+    let changed = false;
+    db.institutions = db.institutions.map((institution: Database['institutions'][number]) => {
+      if (institution.acronym && institution.color) return institution;
+      changed = true;
+      return {
+        ...institution,
+        acronym: institution.acronym || defaultAcronym(institution.name),
+        color: institution.color || DEFAULT_INSTITUTION_COLOR,
+      };
+    });
+    if (changed) saveDatabase(db);
     return db;
   } catch {
     throw new Error(

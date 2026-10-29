@@ -35,9 +35,27 @@ describe('Inicialização limpa', () => {
     expect(session.get()).toBeNull();
     expect(localStorage.getItem(DATABASE_KEY)).toBeTruthy();
   });
+  it('adiciona identidade às instituições antigas sem apagar os demais dados', () => {
+    const db = loadDatabase();
+    localStorage.setItem(
+      DATABASE_KEY,
+      JSON.stringify({ ...db, institutions: [{ id: 'old', name: 'Colégio Antigo' }] }),
+    );
+    const migrated = loadDatabase();
+    expect(migrated.users).toEqual(db.users);
+    expect(migrated.institutions).toEqual([
+      { id: 'old', name: 'Colégio Antigo', acronym: 'COLE', color: '#1c7055' },
+    ]);
+    expect(loadDatabase()).toEqual(migrated);
+  });
   it('preserva os dados novos e a sessão ao reabrir', () => {
     const db = loadDatabase();
-    db.institutions.push({ id: 'new', name: 'Minha instituição' });
+    db.institutions.push({
+      id: 'new',
+      name: 'Minha instituição',
+      acronym: 'MINS',
+      color: '#1c7055',
+    });
     db.users[0].hash = 'changed';
     saveDatabase(db);
     session.set(db.users[0].id);

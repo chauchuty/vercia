@@ -26,8 +26,18 @@ await page.getByLabel('E-mail', { exact: true }).fill('administrador@vercia.loca
 await page.getByLabel('Senha', { exact: true }).fill('Administrador123!');
 await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
 await page.getByLabel('Nome da instituição').fill('Colégio Horizonte');
+await page.getByLabel('Sigla da instituição').fill('chor');
+await page.getByLabel('Cor de referência', { exact: true }).fill('#6842b5');
 await page.getByRole('button', { name: 'Criar instituição', exact: true }).click();
 await page.getByRole('heading', { name: 'Olá, Administrador' }).waitFor();
+await page.reload();
+await page.getByLabel('Sigla CHOR', { exact: true }).waitFor();
+const institution = await page.evaluate(
+  () => JSON.parse(localStorage.getItem('vercia.database.v2')).institutions[0],
+);
+if (institution.acronym !== 'CHOR' || institution.color !== '#6842b5')
+  throw Error('Sigla e cor não foram persistidas');
+
 await page.getByRole('button', { name: 'Categorias', exact: true }).click();
 await page.getByRole('button', { name: 'Nova categoria' }).click();
 await page.getByLabel('Nome da categoria').fill('Professores');

@@ -1,3 +1,4 @@
+import { createInstitution, institutionTextColor } from '../domain/institution';
 import AccountDialog from './dialogs/AccountDialog';
 import ArchiveDialog from './dialogs/ArchiveDialog';
 import DeleteDraftDialog from './dialogs/DeleteDraftDialog';
@@ -138,11 +139,11 @@ export default function App() {
     await run(async () => {
       if (!user?.isAdministrator) throw Error('Somente o Administrador pode criar instituições.');
       const name = input(f, 'institution');
-      if (!name) throw Error('Informe o nome da instituição.');
       const id = uid();
+      const newInstitution = createInstitution(id, name, input(f, 'acronym'), input(f, 'color'));
       commit({
         ...data,
-        institutions: [...data.institutions, { id, name }],
+        institutions: [...data.institutions, newInstitution],
         memberships: [
           ...data.memberships,
           {
@@ -344,8 +345,19 @@ export default function App() {
           vercia<span className="brand-dot">.</span>
         </div>
         <div className="institution">
-          <div className="institution-symbol">
-            <Building2 size={21} />
+          <div
+            className="institution-symbol"
+            style={
+              institution
+                ? {
+                    backgroundColor: institution.color,
+                    color: institutionTextColor(institution.color),
+                  }
+                : undefined
+            }
+            aria-label={institution ? `Sigla ${institution.acronym}` : undefined}
+          >
+            {institution?.acronym || <Building2 size={21} />}
           </div>
           <div>
             <strong>{institution?.name || 'Sem instituição'}</strong>

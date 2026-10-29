@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, você pode criar a primeira instituição. Altere a senha em Minha conta depois de criar a instituição. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
+Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, você pode criar a primeira instituição informando nome, sigla de exatamente 4 letras ou números e cor de referência. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha em Minha conta depois de criar a instituição. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
 
 ```sh
 npm run build
@@ -57,3 +57,5 @@ O GitHub Actions valida TypeScript, build, testes de regras e formatação a cad
 ## Reinício da base nesta atualização
 
 A versão 2 do armazenamento substitui a base local anterior uma única vez: remove a chave `vercia.database.v1`, encerra a sessão antiga e cria `vercia.database.v2` contendo apenas o Administrador. Os dados criados a partir desta versão são preservados nas próximas aberturas. Os testes de navegador usam dados isolados e não adicionam exemplos à aplicação.
+
+Instituições cadastradas antes da inclusão de sigla e cor são preservadas: recebem uma sigla derivada do nome e a cor verde padrão. Nenhuma base é reiniciada por esta feature.

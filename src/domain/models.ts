@@ -11,6 +11,8 @@ export interface User {
 export interface Institution {
   id: string;
   name: string;
+  acronym: string;
+  color: string;
 }
 export interface Membership {
   id: string;

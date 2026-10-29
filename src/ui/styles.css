@@ -1427,3 +1427,43 @@ hr {
     display: none;
   }
 }
+
+.color-picker {
+  height: 43px;
+  padding: 5px;
+  cursor: pointer;
+}
+.institution-symbol {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  min-width: 38px;
+}
+.institution-preview {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: white;
+  font-size: 12px;
+}
+.institution-preview small {
+  display: block;
+  margin-top: 5px;
+  color: #7a8880;
+  font-size: 11px;
+}
+@media (max-width: 620px) {
+  .institution .institution-symbol {
+    display: grid;
+    min-width: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 8px;
+  }
+  .institution strong {
+    max-width: 135px;
+  }
+}
