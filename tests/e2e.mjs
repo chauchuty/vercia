@@ -11,12 +11,23 @@ page.setDefaultTimeout(7000);
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 await page.goto('http://localhost:5173');
+const initial = await page.evaluate(() => JSON.parse(localStorage.getItem('vercia.database.v2')));
+if (
+  initial.users.length !== 1 ||
+  initial.users[0].name !== 'Administrador' ||
+  initial.institutions.length ||
+  initial.notices.length ||
+  initial.memberships.length ||
+  initial.categories.length ||
+  initial.invites.length
+)
+  throw Error('A base inicial precisa conter somente o Administrador');
+await page.getByLabel('E-mail', { exact: true }).fill('administrador@vercia.local');
+await page.getByLabel('Senha', { exact: true }).fill('Administrador123!');
+await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
 await page.getByLabel('Nome da instituição').fill('Colégio Horizonte');
-await page.getByLabel('Seu nome').fill('Marina Oliveira');
-await page.getByLabel('E-mail', { exact: true }).fill('gestora@horizonte.com');
-await page.getByLabel('Senha', { exact: true }).fill('SenhaTeste123!');
-await page.getByRole('button', { name: 'Criar minha instituição' }).click();
-await page.getByRole('heading', { name: 'Olá, Marina' }).waitFor();
+await page.getByRole('button', { name: 'Criar instituição', exact: true }).click();
+await page.getByRole('heading', { name: 'Olá, Administrador' }).waitFor();
 await page.getByRole('button', { name: 'Categorias', exact: true }).click();
 await page.getByRole('button', { name: 'Nova categoria' }).click();
 await page.getByLabel('Nome da categoria').fill('Professores');
@@ -26,7 +37,7 @@ await page.getByRole('button', { name: 'Convidar pessoa' }).click();
 await page.getByLabel('E-mail', { exact: true }).fill('ana@horizonte.com');
 await page.getByRole('button', { name: 'Gerar convite' }).click();
 const token = await page.evaluate(
-  () => JSON.parse(localStorage.getItem('vercia.database.v1')).invites[0].id,
+  () => JSON.parse(localStorage.getItem('vercia.database.v2')).invites[0].id,
 );
 await page.getByRole('button', { name: 'Sair', exact: true }).click();
 await page.goto('http://localhost:5173/?invite=' + token);
@@ -35,8 +46,8 @@ await page.getByLabel('Senha', { exact: true }).fill('SenhaTeste123!');
 await page.getByRole('button', { name: 'Aceitar convite' }).click();
 await page.getByRole('heading', { name: 'Olá, Ana' }).waitFor();
 await page.getByRole('button', { name: 'Sair', exact: true }).click();
-await page.getByLabel('E-mail', { exact: true }).fill('GESTORA@HORIZONTE.COM');
-await page.getByLabel('Senha', { exact: true }).fill('SenhaTeste123!');
+await page.getByLabel('E-mail', { exact: true }).fill('ADMINISTRADOR@VERCIA.LOCAL');
+await page.getByLabel('Senha', { exact: true }).fill('Administrador123!');
 await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
 await page.getByRole('button', { name: 'Pessoas', exact: true }).click();
 await page

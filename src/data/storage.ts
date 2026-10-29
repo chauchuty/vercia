@@ -1,12 +1,20 @@
-import { emptyDatabase, type Database } from '../domain/models';
-const KEY = 'vercia.database.v1';
+import type { Database } from '../domain/models';
+import { initialDatabase } from './initialDatabase';
+export const DATABASE_KEY = 'vercia.database.v2';
 export function loadDatabase(): Database {
-  const raw = localStorage.getItem(KEY);
-  if (!raw) return emptyDatabase();
+  const raw = localStorage.getItem(DATABASE_KEY);
+  if (!raw) {
+    const db = initialDatabase();
+    saveDatabase(db);
+    // The requested clean start replaces the previous local dataset once.
+    localStorage.removeItem('vercia.database.v1');
+    session.clear();
+    return db;
+  }
   try {
     const db = JSON.parse(raw);
     if (
-      db.version !== 1 ||
+      db.version !== 2 ||
       !['users', 'institutions', 'memberships', 'categories', 'invites', 'notices'].every((k) =>
         Array.isArray(db[k]),
       )
@@ -21,7 +29,7 @@ export function loadDatabase(): Database {
 }
 export function saveDatabase(db: Database) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(db));
+    localStorage.setItem(DATABASE_KEY, JSON.stringify(db));
   } catch {
     throw new Error('Não foi possível salvar. Verifique o espaço e as permissões do navegador.');
   }

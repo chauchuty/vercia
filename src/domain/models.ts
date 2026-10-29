@@ -6,6 +6,7 @@ export interface User {
   email: string;
   hash: string;
   salt: string;
+  isAdministrator?: boolean;
 }
 export interface Institution {
   id: string;
@@ -55,7 +56,7 @@ export interface Notice {
   receipts: Receipt[];
 }
 export interface Database {
-  version: 1;
+  version: 2;
   users: User[];
   institutions: Institution[];
   memberships: Membership[];
@@ -70,7 +71,7 @@ export const priorities: Record<Priority, string> = {
   urgent: 'Urgente',
 };
 export const emptyDatabase = (): Database => ({
-  version: 1,
+  version: 2,
   users: [],
   institutions: [],
   memberships: [],

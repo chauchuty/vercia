@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite. No primeiro acesso, cadastre a instituição e a conta gestora. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
+Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, você pode criar a primeira instituição. Altere a senha em Minha conta depois de criar a instituição. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
 
 ```sh
 npm run build
@@ -18,7 +18,7 @@ npm test
 
 ## Fluxo de uso
 
-1. Configure a instituição e o gestor.
+1. Entre com a conta Administrador e crie sua instituição, quando desejar.
 2. Crie categorias, se desejar, e gere convites pelo e-mail das pessoas.
 3. Copie o link do convite e saia da conta gestora. Abra o link no **mesmo navegador e origem** para cadastrar o usuário ou entrar em uma conta existente. Não existe SMTP.
 4. Entre novamente como gestor, associe categorias na tela Pessoas e publique uma notificação para todos ou para categorias selecionadas.
@@ -40,7 +40,7 @@ Senhas são derivadas com PBKDF2/SHA-256, salt individual e 210 mil iterações.
 
 Este é um frontend local: dados, convites e permissões podem ser alterados por quem controla o navegador. Não oferece segurança de servidor e não deve armazenar dados pessoais reais em produção. Não há sincronização entre dispositivos ou navegadores, envio de e-mails, recuperação automática de senha nem notificações push. Limpar os dados do site apaga a base local. Senhas alteradas não revogam sessões já abertas em outras abas.
 
-A interface usa fontes do Google Fonts com fallback local; os fluxos e dados funcionam sem serviços de backend. Nenhuma credencial é incluída no código.
+A interface usa fontes do Google Fonts com fallback local; os fluxos e dados funcionam sem serviços de backend. A credencial inicial do Administrador é pública e serve apenas para este protótipo local; o armazenamento contém somente seu hash, não a senha em texto puro.
 
 ## Validação no navegador
 
@@ -53,3 +53,7 @@ npm run test:e2e
 O teste usa Chromium em `/usr/bin/chromium`. Em outro ambiente, informe o caminho com `CHROMIUM_PATH=/caminho/para/chromium npm run test:e2e`. Ele utiliza um contexto isolado e descarta seus dados ao encerrar, sem preencher a base de uso da aplicação. Verifica configuração inicial, categorias, convite, cadastro, login, segmentação, abertura, confirmação, persistência, troca de senha e uso em celular. Capturas ficam em `work/`, ignorada pelo Git.
 
 O GitHub Actions valida TypeScript, build, testes de regras e formatação a cada push e pull request.
+
+## Reinício da base nesta atualização
+
+A versão 2 do armazenamento substitui a base local anterior uma única vez: remove a chave `vercia.database.v1`, encerra a sessão antiga e cria `vercia.database.v2` contendo apenas o Administrador. Os dados criados a partir desta versão são preservados nas próximas aberturas. Os testes de navegador usam dados isolados e não adicionam exemplos à aplicação.

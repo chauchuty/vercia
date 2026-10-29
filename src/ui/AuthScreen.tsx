@@ -10,7 +10,6 @@ interface Props {
   errorBox: ReactNode;
   busy: boolean;
   onAccept: (e: FormEvent<HTMLFormElement>) => void;
-  onSetup: (e: FormEvent<HTMLFormElement>) => void;
   onLogin: (e: FormEvent<HTMLFormElement>) => void;
   onBack: () => void;
 }
@@ -22,7 +21,6 @@ export default function AuthScreen({
   errorBox,
   busy,
   onAccept,
-  onSetup,
   onLogin,
   onBack,
 }: Props) {
@@ -56,19 +54,11 @@ export default function AuthScreen({
       <main className="auth-main">
         <div className="auth-form">
           <span className="eyebrow">COMUNICAÇÃO ESCOLAR</span>
-          <h1>
-            {inviteToken
-              ? 'Você foi convidado'
-              : !data.users.length
-                ? 'Sua escola começa aqui'
-                : 'Bom ter você de volta'}
-          </h1>
+          <h1>{inviteToken ? 'Você foi convidado' : 'Bom ter você de volta'}</h1>
           <p className="muted">
             {inviteToken
               ? `Acesse ${data.institutions.find((i) => i.id === invite?.institutionId)?.name || 'a instituição'} com segurança.`
-              : !data.users.length
-                ? 'Configure a instituição e sua conta de gestor.'
-                : 'Entre para acompanhar o que importa.'}
+              : 'Entre para acompanhar o que importa.'}
           </p>
           {errorBox}
           {inviteToken && (!invite || !validInvite(invite)) && (
@@ -109,36 +99,6 @@ export default function AuthScreen({
               </button>
               <button type="button" className="text-button" onClick={onBack}>
                 Voltar ao acesso
-              </button>
-            </form>
-          ) : !data.users.length ? (
-            <form onSubmit={onSetup}>
-              <label>
-                Nome da instituição
-                <input name="institution" required placeholder="Colégio Horizonte" />
-              </label>
-              <label>
-                Seu nome
-                <input name="name" required autoComplete="name" />
-              </label>
-              <label>
-                E-mail
-                <input name="email" type="email" required autoComplete="email" />
-              </label>
-              <label>
-                Senha
-                <input
-                  name="password"
-                  type="password"
-                  minLength={8}
-                  required
-                  placeholder="Pelo menos 8 caracteres"
-                  autoComplete="new-password"
-                />
-              </label>
-              <button className="primary" disabled={busy}>
-                {busy ? 'Configurando…' : 'Criar minha instituição'}
-                <ArrowUpRight size={17} />
               </button>
             </form>
           ) : (

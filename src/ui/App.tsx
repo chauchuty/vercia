@@ -8,6 +8,7 @@ import CategoryDialog from './dialogs/CategoryDialog';
 import InvitationDialog from './dialogs/InvitationDialog';
 import NoticeEditor from './dialogs/NoticeEditor';
 import Dashboard from './Dashboard';
+import InstitutionSetup from './InstitutionSetup';
 import AuthScreen from './AuthScreen';
 import NoticeTable from './NoticeTable';
 import { Empty } from './components';
@@ -31,7 +32,7 @@ import {
   Send,
 } from 'lucide-react';
 import type { Database, Notice, Priority, User } from '../domain/models';
-import { loadDatabase, saveDatabase, session } from '../data/storage';
+import { loadDatabase, saveDatabase, session, DATABASE_KEY } from '../data/storage';
 import { createUser, normalizeEmail, verifyPassword } from '../application/auth';
 import { publishNotice, recordReceipt, requireManager, validInvite } from '../application/service';
 import { uid, date, input } from './helpers';
@@ -59,7 +60,7 @@ export default function App() {
   );
   useEffect(() => {
     const sync = (event: StorageEvent) => {
-      if (event.key === 'vercia.database.v1') {
+      if (event.key === DATABASE_KEY) {
         try {
           setDb(loadDatabase());
         } catch (e) {
@@ -135,16 +136,18 @@ export default function App() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     await run(async () => {
-      const u = await createUser(input(f, 'name'), input(f, 'email'), input(f, 'password'));
+      if (!user?.isAdministrator) throw Error('Somente o Administrador pode criar instituições.');
+      const name = input(f, 'institution');
+      if (!name) throw Error('Informe o nome da instituição.');
       const id = uid();
       commit({
         ...data,
-        users: [u],
-        institutions: [{ id, name: input(f, 'institution') }],
+        institutions: [...data.institutions, { id, name }],
         memberships: [
+          ...data.memberships,
           {
             id: uid(),
-            userId: u.id,
+            userId: user.id,
             institutionId: id,
             role: 'manager',
             active: true,
@@ -152,7 +155,7 @@ export default function App() {
           },
         ],
       });
-      login(u);
+      setInstitutionId(id);
     });
   }
   async function acceptInvite(e: FormEvent<HTMLFormElement>) {
@@ -224,12 +227,24 @@ export default function App() {
         errorBox={errorBox}
         busy={busy}
         onAccept={acceptInvite}
-        onSetup={setup}
         onLogin={authenticate}
         onBack={() => {
           setInviteToken('');
           history.replaceState(null, '', location.pathname);
         }}
+      />
+    );
+  if (user.isAdministrator && !membership)
+    return (
+      <InstitutionSetup
+        user={user}
+        onSubmit={setup}
+        onLogout={() => {
+          session.clear();
+          setUserId(null);
+        }}
+        errorBox={errorBox}
+        busy={busy}
       />
     );
   const actor = user;
