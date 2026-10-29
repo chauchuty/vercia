@@ -1,0 +1,101 @@
+import type { DialogProps } from './types';
+import { Modal } from '../components';
+import { uid, input } from '../helpers';
+export default function CategoryDialog({
+  modal,
+  manager,
+  selected,
+  data,
+  inst,
+  categories,
+  errorBox,
+  busy,
+  run,
+  manage,
+  commit,
+  close,
+  notify,
+}: Pick<
+  DialogProps,
+  | 'modal'
+  | 'manager'
+  | 'selected'
+  | 'data'
+  | 'inst'
+  | 'categories'
+  | 'errorBox'
+  | 'busy'
+  | 'run'
+  | 'manage'
+  | 'commit'
+  | 'close'
+  | 'notify'
+>) {
+  return (
+    <>
+      {modal === 'category' && manager && (
+        <Modal title={selected ? 'Gerenciar categoria' : 'Nova categoria'} onClose={close}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const f = new FormData(e.currentTarget);
+              run(() => {
+                manage();
+                const name = input(f, 'name');
+                if (!name) throw Error('Informe o nome.');
+                if (
+                  categories.some(
+                    (c) => c.id !== selected && c.name.toLowerCase() === name.toLowerCase(),
+                  )
+                )
+                  throw Error('Já existe uma categoria com este nome.');
+                const c = {
+                  id: selected || uid(),
+                  institutionId: inst,
+                  name,
+                  archived: f.has('archived'),
+                };
+                commit({
+                  ...data,
+                  categories: selected
+                    ? data.categories.map((x) => (x.id === selected ? c : x))
+                    : [...data.categories, c],
+                });
+                close();
+                notify('Categoria salva.');
+              });
+            }}
+          >
+            {errorBox}
+            <label>
+              Nome da categoria
+              <input
+                name="name"
+                required
+                defaultValue={categories.find((c) => c.id === selected)?.name}
+                placeholder="Ex.: Professores"
+              />
+            </label>
+            {selected && (
+              <label className="check-label">
+                <input
+                  type="checkbox"
+                  name="archived"
+                  defaultChecked={categories.find((c) => c.id === selected)?.archived}
+                />
+                Arquivar categoria
+              </label>
+            )}
+            <p className="help">
+              Associe as pessoas às categorias na tela Pessoas. Arquivar não altera notificações já
+              publicadas.
+            </p>
+            <button className="primary" disabled={busy}>
+              Salvar categoria
+            </button>
+          </form>
+        </Modal>
+      )}
+    </>
+  );
+}

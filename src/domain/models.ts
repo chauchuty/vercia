@@ -1,0 +1,80 @@
+export type Role = 'manager' | 'member';
+export type Priority = 'low' | 'medium' | 'high' | 'urgent';
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  hash: string;
+  salt: string;
+}
+export interface Institution {
+  id: string;
+  name: string;
+}
+export interface Membership {
+  id: string;
+  userId: string;
+  institutionId: string;
+  role: Role;
+  active: boolean;
+  categoryIds: string[];
+}
+export interface Category {
+  id: string;
+  institutionId: string;
+  name: string;
+  archived: boolean;
+}
+export interface Invite {
+  id: string;
+  institutionId: string;
+  email: string;
+  role: Role;
+  expiresAt: string;
+  used: boolean;
+  revoked: boolean;
+}
+export interface Receipt {
+  userId: string;
+  openedAt?: string;
+  confirmedAt?: string;
+}
+export interface Notice {
+  id: string;
+  institutionId: string;
+  authorId: string;
+  title: string;
+  body: string;
+  priority: Priority;
+  requiresConfirmation: boolean;
+  audience: 'all' | 'categories';
+  categoryIds: string[];
+  status: 'draft' | 'published' | 'archived';
+  createdAt: string;
+  publishedAt?: string;
+  receipts: Receipt[];
+}
+export interface Database {
+  version: 1;
+  users: User[];
+  institutions: Institution[];
+  memberships: Membership[];
+  categories: Category[];
+  invites: Invite[];
+  notices: Notice[];
+}
+export const priorities: Record<Priority, string> = {
+  low: 'Baixa',
+  medium: 'Média',
+  high: 'Alta',
+  urgent: 'Urgente',
+};
+export const emptyDatabase = (): Database => ({
+  version: 1,
+  users: [],
+  institutions: [],
+  memberships: [],
+  categories: [],
+  invites: [],
+  notices: [],
+});
