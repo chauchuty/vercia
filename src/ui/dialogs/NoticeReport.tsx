@@ -2,7 +2,7 @@ import type { DialogProps } from './types';
 import { Modal, PriorityIcon } from '../components';
 import { date } from '../helpers';
 import { priorities } from '../../domain/models';
-import { Archive, ArchiveRestore } from 'lucide-react';
+import { Archive, ArchiveRestore, Pencil } from 'lucide-react';
 import { Pagination, usePagination } from '../Pagination';
 import NoticeConversation from '../NoticeConversation';
 export default function NoticeReport({
@@ -75,6 +75,11 @@ export default function NoticeReport({
             </table>
           </div>
           <Pagination {...pagination} />
+          <div className="modal-actions">
+            <button className="secondary" onClick={() => openModal('compose', currentNotice.id)}>
+              <Pencil size={16} /> Editar notificação
+            </button>
+          </div>
           {currentNotice.status === 'archived' && (
             <div className="modal-actions">
               <button
@@ -107,7 +112,42 @@ export default function NoticeReport({
               </button>
             </div>
           )}
-          <p className="help">Os destinatários foram fixados no momento da publicação.</p>
+          {(currentNotice.revisions || []).length > 0 && (
+            <details className="notice-revisions">
+              <summary>Histórico de versões ({currentNotice.revisions?.length})</summary>
+              {[...(currentNotice.revisions || [])].reverse().map((revision, index) => (
+                <section className="notice-revision" key={`${revision.savedAt}-${index}`}>
+                  <h3>{revision.title}</h3>
+                  <small>
+                    Versão anterior a {date(revision.savedAt)} · Prioridade{' '}
+                    {priorities[revision.priority]}
+                  </small>
+                  <p className="revision-body">{revision.body}</p>
+                  <p className="help">
+                    {revision.requiresConfirmation
+                      ? 'Confirmação solicitada'
+                      : 'Confirmação não solicitada'}
+                  </p>
+                  <ul>
+                    {revision.receipts.map((receipt) => (
+                      <li key={receipt.userId}>
+                        <strong>
+                          {data.users.find((u) => u.id === receipt.userId)?.name || 'Usuário'}
+                        </strong>{' '}
+                        · Abertura: {receipt.openedAt ? date(receipt.openedAt) : 'Não aberta'} ·
+                        Confirmação:{' '}
+                        {revision.requiresConfirmation
+                          ? receipt.confirmedAt
+                            ? date(receipt.confirmedAt)
+                            : 'Pendente'
+                          : 'Não solicitada'}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </details>
+          )}
           <NoticeConversation
             data={data}
             notice={currentNotice}

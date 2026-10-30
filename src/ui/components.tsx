@@ -39,6 +39,8 @@ export function Modal({
       );
     focusable()[0]?.focus();
     const onKey = (e: KeyboardEvent) => {
+      const topOverlay = document.querySelectorAll('.overlay');
+      if (topOverlay[topOverlay.length - 1] !== element?.closest('.overlay')) return;
       if (e.key === 'Escape') closeRef.current();
       if (e.key === 'Tab') {
         const items = focusable();

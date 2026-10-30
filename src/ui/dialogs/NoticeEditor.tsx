@@ -64,7 +64,16 @@ export default function NoticeEditor({
   return (
     <>
       {modal === 'compose' && manager && (
-        <Modal title={selected ? 'Editar rascunho' : 'Nova notificação'} onClose={close}>
+        <Modal
+          title={
+            selected
+              ? currentNotice?.status === 'draft'
+                ? 'Editar rascunho'
+                : 'Editar notificação'
+              : 'Nova notificação'
+          }
+          onClose={close}
+        >
           <form onSubmit={saveNotice}>
             {errorBox}
             <label>
@@ -116,7 +125,7 @@ export default function NoticeEditor({
                 Categorias <small>Usadas apenas ao selecionar categorias acima</small>
               </legend>
               {categories
-                .filter((c) => !c.archived)
+                .filter((c) => !c.archived || currentNotice?.categoryIds.includes(c.id))
                 .map((c) => (
                   <label className="check-label" key={c.id}>
                     <input
@@ -126,6 +135,7 @@ export default function NoticeEditor({
                       defaultChecked={currentNotice?.categoryIds.includes(c.id)}
                     />
                     {c.name}
+                    {c.archived ? ' · arquivada' : ''}
                   </label>
                 ))}
               {!categories.some((c) => !c.archived) && (
@@ -202,8 +212,12 @@ export default function NoticeEditor({
                 <small>Além de abrir, a pessoa precisa confirmar que leu.</small>
               </span>
             </label>
-            <p className="help">Após a publicação, a mensagem e os destinatários ficam fixos.</p>
-            {selected && (
+            <p className="help">
+              {currentNotice && currentNotice.status !== 'draft'
+                ? 'Alterações no conteúdo exigem nova leitura e confirmação. O histórico anterior será preservado.'
+                : 'Você poderá editar a notificação após a publicação.'}
+            </p>
+            {selected && currentNotice?.status === 'draft' && (
               <button
                 type="button"
                 className="text-button danger"
@@ -214,12 +228,16 @@ export default function NoticeEditor({
               </button>
             )}
             <div className="modal-actions">
-              <button type="submit" className="secondary" value="draft" disabled={busy}>
-                Salvar rascunho
-              </button>
+              {(!currentNotice || currentNotice.status === 'draft') && (
+                <button type="submit" className="secondary" value="draft" disabled={busy}>
+                  Salvar rascunho
+                </button>
+              )}
               <button type="submit" className="primary" value="publish" disabled={busy}>
                 <Send size={16} />
-                Publicar notificação
+                {currentNotice && currentNotice.status !== 'draft'
+                  ? 'Salvar alterações'
+                  : 'Publicar notificação'}
               </button>
             </div>
           </form>

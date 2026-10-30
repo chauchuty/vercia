@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Modal } from './components';
 import type { Database, Notice, User } from '../domain/models';
 import { sendNoticeMessage } from '../application/service';
 import { uid, date } from './helpers';
@@ -22,6 +24,8 @@ export default function NoticeConversation({
   commit,
 }: Props) {
   const [thread, setThread] = useState('');
+  const [composing, setComposing] = useState(false);
+  const [messageError, setMessageError] = useState('');
   useEffect(() => setThread(''), [notice.id]);
   const messages = notice.messages || [];
   const threadIds = [
@@ -73,46 +77,71 @@ export default function NoticeConversation({
             <p className="help">Nenhuma mensagem nesta conversa.</p>
           )}
           {notice.status === 'published' ? (
-            <form
-              className="conversation-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const form = e.currentTarget;
-                const body = String(new FormData(form).get('message') || '');
-                run(() => {
-                  commit(
-                    sendNoticeMessage(data, user.id, notice.id, {
-                      id: uid(),
-                      threadUserId: currentThread,
-                      authorId: user.id,
-                      body,
-                      createdAt: new Date().toISOString(),
-                    }),
-                  );
-                  form.reset();
-                });
+            <button
+              type="button"
+              className="primary conversation-open"
+              onClick={() => {
+                setMessageError('');
+                setComposing(true);
               }}
             >
-              <label>
-                Mensagem
-                <textarea
-                  name="message"
-                  rows={3}
-                  maxLength={2000}
-                  required
-                  placeholder={manager ? 'Escreva sua resposta' : 'Escreva para o gestor'}
-                />
-              </label>
-              <button type="submit" className="primary" disabled={busy}>
-                {manager ? 'Responder' : 'Enviar mensagem'}
-              </button>
-            </form>
+              Enviar mensagem
+            </button>
           ) : (
             <p className="help">Esta notificação está arquivada. Desarquive-a para responder.</p>
           )}
         </>
       )}
       <p className="help">Mensagens salvas neste navegador.</p>
+      {composing &&
+        createPortal(
+          <Modal title="Enviar mensagem" onClose={() => setComposing(false)}>
+            <form
+              className="conversation-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const body = String(new FormData(event.currentTarget).get('message') || '');
+                run(() => {
+                  try {
+                    commit(
+                      sendNoticeMessage(data, user.id, notice.id, {
+                        id: uid(),
+                        threadUserId: currentThread,
+                        authorId: user.id,
+                        body,
+                        createdAt: new Date().toISOString(),
+                      }),
+                    );
+                    setComposing(false);
+                    setMessageError('');
+                  } catch (error) {
+                    setMessageError((error as Error).message);
+                  }
+                });
+              }}
+            >
+              {messageError && (
+                <div className="error" role="alert">
+                  {messageError}
+                </div>
+              )}
+              <label>
+                Mensagem
+                <textarea
+                  name="message"
+                  rows={4}
+                  maxLength={2000}
+                  required
+                  placeholder={manager ? 'Escreva sua resposta' : 'Escreva para o gestor'}
+                />
+              </label>
+              <button type="submit" className="primary" disabled={busy}>
+                Confirmar
+              </button>
+            </form>
+          </Modal>,
+          document.body,
+        )}
     </section>
   );
 }

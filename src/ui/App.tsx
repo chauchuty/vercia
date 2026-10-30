@@ -47,6 +47,7 @@ import {
   requireManager,
   validInvite,
   membershipIsActive,
+  editPublishedNotice,
 } from '../application/service';
 import { uid, date, input } from './helpers';
 export default function App() {
@@ -496,7 +497,7 @@ export default function App() {
     await run(() => {
       manage();
       const old = selected ? notices.find((n) => n.id === selected) : undefined;
-      if (old && old.status !== 'draft') throw Error('Uma publicação não pode ser editada.');
+      const editingPublished = !!old && old.status !== 'draft';
       let notice: Notice = {
         id: old?.id || uid(),
         institutionId: inst,
@@ -516,7 +517,8 @@ export default function App() {
         throw Error('Selecione pelo menos uma categoria.');
       if (notice.audience === 'individuals' && !notice.recipientIds?.length)
         throw Error('Selecione pelo menos uma pessoa.');
-      if (publish) notice = publishNotice(data, actor.id, notice);
+      if (editingPublished && old) notice = editPublishedNotice(data, actor.id, old, notice);
+      else if (publish) notice = publishNotice(data, actor.id, notice);
       commit({
         ...data,
         notices: old
@@ -524,7 +526,13 @@ export default function App() {
           : [...data.notices, notice],
       });
       close();
-      notify(publish ? 'Notificação publicada com sucesso.' : 'Rascunho salvo.');
+      notify(
+        editingPublished
+          ? 'Notificação atualizada.'
+          : publish
+            ? 'Notificação publicada com sucesso.'
+            : 'Rascunho salvo.',
+      );
     });
   }
   const dialogProps = {

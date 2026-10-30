@@ -2972,3 +2972,43 @@ html[data-theme='dark'] .conversation-list time {
 html[data-theme='dark'] .recipient-selection-count {
   color: #baccc0;
 }
+
+.notice-revisions {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 18px;
+}
+.notice-revisions summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+}
+.notice-revision {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.notice-revision h3 {
+  margin-bottom: 4px;
+}
+.notice-revision small {
+  color: #829388;
+}
+.notice-revision ul {
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+}
+.revision-body {
+  white-space: pre-wrap;
+  margin: 12px 0;
+}
+
+.theme-toggle {
+  position: static;
+  z-index: auto;
+}
+.conversation-open {
+  margin-top: 16px;
+}

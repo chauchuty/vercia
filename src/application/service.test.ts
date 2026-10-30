@@ -7,6 +7,7 @@ import {
   validInvite,
   requireManager,
   sendNoticeMessage,
+  editPublishedNotice,
 } from './service';
 const draft: Notice = {
   id: 'n',
@@ -169,6 +170,63 @@ describe('Mensagens de notificações', () => {
     ).toThrow('iniciada');
     db.notices[0].status = 'archived';
     expect(() => sendNoticeMessage(db, 'alice', 'n', message)).toThrow('publicadas');
+  });
+});
+describe('Edição de notificação publicada', () => {
+  it('preserva histórico de destinatários e confirmações e exige nova leitura após alteração de conteúdo', () => {
+    const db = fixture();
+    const old = {
+      ...publishNotice(db, 'manager', draft),
+      receipts: [{ userId: 'alice', openedAt: '2026-01-01', confirmedAt: '2026-01-02' }],
+      messages: [
+        { id: 'c', threadUserId: 'alice', authorId: 'alice', body: 'Olá', createdAt: '2026-01-01' },
+      ],
+    };
+    db.memberships.push({
+      id: 'd',
+      userId: 'diana',
+      institutionId: 'school',
+      role: 'member',
+      active: true,
+      categoryIds: [],
+    });
+    const updated = editPublishedNotice(db, 'manager', old, {
+      ...old,
+      title: 'Atualizada',
+      audience: 'individuals',
+      recipientIds: ['diana'],
+    });
+    expect(updated.receipts).toEqual([{ userId: 'diana' }]);
+    expect(updated.revisions?.[0].receipts).toEqual(old.receipts);
+    expect(updated.revisions?.[0].title).toBe(old.title);
+    expect(updated.messages).toEqual(old.messages);
+    expect(updated.publishedAt).toBe(old.publishedAt);
+  });
+  it('redefine leitura da versão alterada e conserva confirmações quando só os destinatários mudam', () => {
+    const db = fixture();
+    db.memberships.push({
+      id: 'd',
+      userId: 'diana',
+      institutionId: 'school',
+      role: 'member',
+      active: true,
+      categoryIds: [],
+    });
+    const old = {
+      ...publishNotice(db, 'manager', draft),
+      receipts: [{ userId: 'alice', openedAt: '2026-01-01', confirmedAt: '2026-01-02' }],
+    };
+    const changed = editPublishedNotice(db, 'manager', old, { ...old, body: 'Outra versão' });
+    expect(changed.receipts).toEqual([{ userId: 'alice' }]);
+    const audienceOnly = editPublishedNotice(db, 'manager', old, {
+      ...old,
+      audience: 'individuals',
+      recipientIds: ['alice', 'diana'],
+    });
+    expect(audienceOnly.receipts).toEqual([old.receipts[0], { userId: 'diana' }]);
+    expect(() => editPublishedNotice(db, 'alice', old, { ...old, title: 'Inválido' })).toThrow(
+      'gestor',
+    );
   });
 });
 describe('Validade de convites', () => {

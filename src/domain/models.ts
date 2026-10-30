@@ -64,6 +64,17 @@ export interface NoticeMessage {
   body: string;
   createdAt: string;
 }
+export interface NoticeRevision {
+  savedAt: string;
+  title: string;
+  body: string;
+  priority: Priority;
+  requiresConfirmation: boolean;
+  audience: Notice['audience'];
+  categoryIds: string[];
+  recipientIds?: string[];
+  receipts: Receipt[];
+}
 export interface Notice {
   id: string;
   institutionId: string;
@@ -80,6 +91,7 @@ export interface Notice {
   publishedAt?: string;
   receipts: Receipt[];
   messages?: NoticeMessage[];
+  revisions?: NoticeRevision[];
 }
 export interface Database {
   version: 2;

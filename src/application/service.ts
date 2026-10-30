@@ -61,6 +61,77 @@ export function publishNotice(db: Database, userId: string, notice: Notice): Not
     receipts: audience.map((m) => ({ userId: m.userId })),
   };
 }
+export function editPublishedNotice(
+  db: Database,
+  userId: string,
+  original: Notice,
+  changes: Notice,
+): Notice {
+  requireManager(db, userId, original.institutionId);
+  if (
+    !['published', 'archived'].includes(original.status) ||
+    original.id !== changes.id ||
+    original.institutionId !== changes.institutionId
+  )
+    throw Error('Notificação inválida para edição.');
+  if (!changes.title.trim() || !changes.body.trim()) throw Error('Preencha título e mensagem.');
+  const idsEqual = (a: string[] = [], b: string[] = []) =>
+    [...new Set(a)].sort().join('\u0000') === [...new Set(b)].sort().join('\u0000');
+  const audienceChanged =
+    original.audience !== changes.audience ||
+    (changes.audience === 'categories' && !idsEqual(original.categoryIds, changes.categoryIds)) ||
+    (changes.audience === 'individuals' && !idsEqual(original.recipientIds, changes.recipientIds));
+  const contentChanged =
+    original.title !== changes.title ||
+    original.body !== changes.body ||
+    original.priority !== changes.priority ||
+    original.requiresConfirmation !== changes.requiresConfirmation;
+  if (!audienceChanged && !contentChanged) return original;
+  let nextReceipts = original.receipts.map((receipt) => ({ ...receipt }));
+  if (audienceChanged) {
+    const targets = recipients(db, changes);
+    if (
+      changes.audience === 'individuals' &&
+      new Set(changes.recipientIds || []).size !== targets.length
+    )
+      throw Error(
+        'Uma pessoa selecionada não possui acesso ativo nesta instituição. Revise os destinatários.',
+      );
+    if (!targets.length) throw Error('Nenhum destinatário ativo selecionado.');
+    nextReceipts = targets.map(
+      (target) =>
+        original.receipts.find((receipt) => receipt.userId === target.userId) || {
+          userId: target.userId,
+        },
+    );
+  }
+  if (contentChanged) nextReceipts = nextReceipts.map((receipt) => ({ userId: receipt.userId }));
+  return {
+    ...original,
+    title: changes.title,
+    body: changes.body,
+    priority: changes.priority,
+    requiresConfirmation: changes.requiresConfirmation,
+    audience: changes.audience,
+    categoryIds: changes.categoryIds,
+    recipientIds: changes.recipientIds,
+    receipts: nextReceipts,
+    revisions: [
+      ...(original.revisions || []),
+      {
+        savedAt: new Date().toISOString(),
+        title: original.title,
+        body: original.body,
+        priority: original.priority,
+        requiresConfirmation: original.requiresConfirmation,
+        audience: original.audience,
+        categoryIds: [...original.categoryIds],
+        recipientIds: original.recipientIds ? [...original.recipientIds] : undefined,
+        receipts: original.receipts.map((receipt) => ({ ...receipt })),
+      },
+    ],
+  };
+}
 export function recordReceipt(
   db: Database,
   userId: string,
