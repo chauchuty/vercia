@@ -48,7 +48,11 @@ export default function InstitutionPicker({
         <button type="button" className="primary" onClick={onCreate}>
           <Plus size={17} /> Cadastrar instituição
         </button>
-        <button type="button" className="text-button institution-picker-logout" onClick={onLogout}>
+        <button
+          type="button"
+          className="text-button navigation-button institution-picker-logout"
+          onClick={onLogout}
+        >
           <LogOut size={16} /> Sair
         </button>
       </section>

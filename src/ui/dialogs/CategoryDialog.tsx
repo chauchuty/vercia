@@ -2,6 +2,8 @@ import type { DialogProps } from './types';
 import { Modal } from '../components';
 import { uid, input } from '../helpers';
 import { categoryIcons, categoryColor, type CategoryIconName } from '../categoryIcons';
+import ColorSlider from '../ColorSlider';
+import { useEffect, useState } from 'react';
 export default function CategoryDialog({
   modal,
   manager,
@@ -32,6 +34,11 @@ export default function CategoryDialog({
   | 'close'
   | 'notify'
 >) {
+  const [color, setColor] = useState(categoryColor());
+  useEffect(() => {
+    if (modal === 'category')
+      setColor(categoryColor(categories.find((c) => c.id === selected)?.color));
+  }, [modal, selected]);
   return (
     <>
       {modal === 'category' && manager && (
@@ -101,12 +108,7 @@ export default function CategoryDialog({
             </fieldset>
             <label>
               Cor da categoria
-              <input
-                type="color"
-                name="color"
-                className="color-picker"
-                defaultValue={categoryColor(categories.find((c) => c.id === selected)?.color)}
-              />
+              <ColorSlider key={selected || 'new'} name="color" value={color} onChange={setColor} />
             </label>
             {selected && (
               <label className="check-label">

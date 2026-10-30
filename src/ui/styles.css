@@ -2722,3 +2722,101 @@ html[data-theme='dark'] .institution-edit:hover {
     padding-right: 10px;
   }
 }
+
+.color-slider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.color-slider input[type='range'] {
+  flex: 1;
+  min-width: 0;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    #c42c2c,
+    #c4c42c,
+    #2cc42c,
+    #2cc4c4,
+    #2c2cc4,
+    #c42cc4,
+    #c42c2c
+  );
+  cursor: pointer;
+}
+.color-slider input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: #324b3a;
+  box-shadow: 0 1px 4px #0008;
+}
+.color-slider input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: #324b3a;
+  box-shadow: 0 1px 4px #0008;
+}
+.color-slider-swatch {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.navigation-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 18px;
+}
+.navigation-button {
+  min-height: 44px;
+  padding: 10px 14px;
+  justify-content: center;
+}
+.institution-picker-logout {
+  margin: 16px auto 0;
+}
+.account-logout {
+  min-height: 44px;
+}
+.sidebar .profile .icon-button,
+.admin-topbar-actions .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+@media (max-width: 420px) {
+  .navigation-actions {
+    gap: 8px;
+  }
+  .navigation-actions .navigation-button {
+    flex: 1 1 120px;
+  }
+  .account-logout {
+    width: 100%;
+  }
+}
+html[data-theme] .color-slider input[type='range'] {
+  background: linear-gradient(
+    to right,
+    #c42c2c,
+    #c4c42c,
+    #2cc42c,
+    #2cc4c4,
+    #2c2cc4,
+    #c42cc4,
+    #c42c2c
+  );
+  border: 0;
+}

@@ -93,7 +93,7 @@ export default function AccountDialog({
           </form>
           <hr />
           <button
-            className="secondary"
+            className="secondary account-logout"
             onClick={() => {
               session.clear();
               setUserId(null);

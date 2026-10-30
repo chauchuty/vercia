@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from 'react';
 import { DEFAULT_INSTITUTION_COLOR, institutionTextColor } from '../domain/institution';
 import { Building2, LogOut } from 'lucide-react';
 import type { User, Institution } from '../domain/models';
+import ColorSlider from './ColorSlider';
 interface Props {
   user: User;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -64,25 +65,28 @@ export default function InstitutionSetup({
             </label>
             <label>
               Cor de referência
-              <input
-                type="color"
-                aria-label="Cor de referência"
-                name="color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                required
-                className="color-picker"
-              />
-              <small className="help">{color.toUpperCase()}</small>
+              <ColorSlider name="color" value={color} onChange={setColor} />
             </label>
           </div>
           <label>
-            Telefone (opcional)
-            <input name="phone" type="tel" defaultValue={institution?.phone || ''} />
+            Telefone
+            <input
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              required
+              defaultValue={institution?.phone || ''}
+            />
           </label>
           <label>
-            E-mail (opcional)
-            <input name="email" type="email" defaultValue={institution?.email || ''} />
+            E-mail
+            <input
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              defaultValue={institution?.email || ''}
+            />
           </label>
           <label>
             Endereço (opcional)
@@ -109,17 +113,19 @@ export default function InstitutionSetup({
           </button>
         </form>
         <p className="help" style={{ marginTop: 20 }}>
-          Os dados adicionais são opcionais e podem ser atualizados depois.
+          O endereço é opcional e pode ser atualizado depois.
         </p>
-        {onBack && (
-          <button className="text-button" onClick={onBack}>
-            Voltar
+        <div className="navigation-actions">
+          {onBack && (
+            <button type="button" className="text-button navigation-button" onClick={onBack}>
+              Voltar
+            </button>
+          )}
+          <button type="button" className="text-button navigation-button" onClick={onLogout}>
+            <LogOut size={16} />
+            Sair
           </button>
-        )}
-        <button className="text-button" onClick={onLogout}>
-          <LogOut size={16} />
-          Sair
-        </button>
+        </div>
       </section>
     </main>
   );

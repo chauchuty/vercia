@@ -185,6 +185,13 @@ export default function App() {
       login(u);
     });
   }
+  function institutionContact(form: FormData) {
+    const phone = input(form, 'phone');
+    const email = input(form, 'email');
+    if (!phone) throw Error('Informe o telefone da instituição.');
+    if (!email) throw Error('Informe o e-mail da instituição.');
+    return { phone, email, address: input(form, 'address') };
+  }
   async function setup(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -199,9 +206,7 @@ export default function App() {
       const id = uid();
       const newInstitution = {
         ...createInstitution(id, name, input(f, 'acronym'), input(f, 'color')),
-        phone: input(f, 'phone'),
-        email: input(f, 'email'),
-        address: input(f, 'address'),
+        ...institutionContact(f),
       };
       commit({
         ...data,
@@ -423,9 +428,7 @@ export default function App() {
                       input(form, 'acronym'),
                       input(form, 'color'),
                     ),
-                    phone: input(form, 'phone'),
-                    email: input(form, 'email'),
-                    address: input(form, 'address'),
+                    ...institutionContact(form),
                   };
                   commit({
                     ...data,

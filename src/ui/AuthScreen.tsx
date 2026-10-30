@@ -79,7 +79,7 @@ export default function AuthScreen({
                 {busy ? 'Aguarde…' : 'Aceitar convite'}
                 <ArrowUpRight size={17} />
               </button>
-              <button type="button" className="text-button" onClick={onBack}>
+              <button type="button" className="text-button navigation-button" onClick={onBack}>
                 Voltar ao acesso
               </button>
             </form>
