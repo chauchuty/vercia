@@ -1,16 +1,4 @@
-import {
-  Send,
-  Users,
-  Eye,
-  Clock,
-  Bell,
-  Mail,
-  ArrowUpRight,
-  Tags,
-  ChevronRight,
-  Settings,
-  ShieldCheck,
-} from 'lucide-react';
+import { Send, Users, Eye, Clock, Bell, Mail, ArrowUpRight, ChevronRight } from 'lucide-react';
 import type { Notice, Membership, User } from '../domain/models';
 import NoticeTable from './NoticeTable';
 import { Empty, PriorityIcon } from './components';
@@ -31,12 +19,9 @@ export default function Dashboard({
   manager,
   notices,
   members,
-  onCompose,
-  onInvite,
   onNavigate,
   onOpen,
   onManage,
-  onAccount,
 }: Props) {
   const published = notices.filter((n) => n.status === 'published');
   const mine = published.filter((n) => n.receipts.some((r) => r.userId === user.id));
@@ -184,63 +169,6 @@ export default function Dashboard({
             personal={!manager}
           />
         </section>
-        <aside className="right-column">
-          <section className="welcome-card">
-            <span className="decor-circle" />
-            <span className="eyebrow">MAIS PROXIMIDADE</span>
-            <h2>
-              Uma comunidade <br />
-              bem informada <br />
-              vai mais longe.
-            </h2>
-            <p>
-              {manager
-                ? 'Mantenha todos por perto. Compartilhe o próximo aviso com a sua instituição.'
-                : 'Acompanhe os avisos e participe da vida da sua instituição.'}
-            </p>
-            <button onClick={() => (manager ? onCompose() : onNavigate('inbox'))}>
-              {manager ? 'Criar uma notificação' : 'Abrir minha caixa'}
-              <ArrowUpRight size={18} />
-            </button>
-          </section>
-          <section className="panel quick-panel">
-            <h3>{manager ? 'Acesso rápido' : 'Sua conta'}</h3>
-            {manager ? (
-              <>
-                <button onClick={() => onInvite()}>
-                  <span>
-                    <Users size={18} />
-                    Convidar pessoas
-                  </span>
-                  <ChevronRight size={16} />
-                </button>
-                <button
-                  onClick={() => {
-                    onNavigate('categories');
-                  }}
-                >
-                  <span>
-                    <Tags size={18} />
-                    Organizar categorias
-                  </span>
-                  <ChevronRight size={16} />
-                </button>
-              </>
-            ) : (
-              <button onClick={() => onAccount()}>
-                <span>
-                  <Settings size={18} />
-                  Alterar senha
-                </span>
-                <ChevronRight size={16} />
-              </button>
-            )}
-          </section>
-        </aside>
-      </div>
-      <div className="bottom-note">
-        <ShieldCheck size={16} />
-        Uma comunicação clara fortalece os vínculos da sua comunidade.
       </div>
     </>
   );

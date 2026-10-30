@@ -1,6 +1,6 @@
 import PasswordInput from './PasswordInput';
 import type { FormEvent, ReactNode } from 'react';
-import { ArrowUpRight, Bell, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Bell } from 'lucide-react';
 import type { Database, Invite, User } from '../domain/models';
 import { validInvite } from '../application/service';
 interface Props {
@@ -27,39 +27,20 @@ export default function AuthScreen({
 }: Props) {
   return (
     <div className="auth-shell">
-      <aside className="auth-story">
-        <div className="brand">
-          <span className="brand-icon">
-            <Bell size={23} />
-          </span>
-          vercia<span className="brand-dot">.</span>
-        </div>
-        <div>
-          <span className="eyebrow">CONEXÕES QUE IMPORTAM</span>
-          <h1>
-            A informação certa.
-            <br />
-            Para as pessoas certas.
-          </h1>
-          <p>Uma comunicação escolar mais próxima, organizada e transparente.</p>
-          <div className="story-card">
-            <ShieldCheck size={25} />
-            <div>
-              <strong>Comunicar é cuidar.</strong>
-              <p>Cada aviso recebido. Cada confirmação acompanhada.</p>
-            </div>
-          </div>
-        </div>
-        <small>Feito para a sua comunidade escolar.</small>
-      </aside>
       <main className="auth-main">
         <div className="auth-form">
-          <span className="eyebrow">COMUNICAÇÃO ESCOLAR</span>
-          <h1>{inviteToken ? 'Você foi convidado' : 'Bom ter você de volta'}</h1>
+          <div className="brand auth-brand">
+            <span className="brand-icon">
+              <Bell size={20} />
+            </span>
+            vercia<span className="brand-dot">.</span>
+          </div>
+
+          <h1>{inviteToken ? 'Você foi convidado' : 'Entrar'}</h1>
           <p className="muted">
             {inviteToken
               ? `Acesse ${data.institutions.find((i) => i.id === invite?.institutionId)?.name || 'a instituição'} com segurança.`
-              : 'Entre para acompanhar o que importa.'}
+              : 'Acesse suas notificações e sua instituição.'}
           </p>
           {errorBox}
           {inviteToken && (!invite || !validInvite(invite)) && (

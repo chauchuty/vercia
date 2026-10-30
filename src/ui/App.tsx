@@ -564,11 +564,6 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="local-card">
-            <span className="status-dot" />
-            <strong>Seu espaço, conectado.</strong>
-            <p>Comunicação que aproxima toda a comunidade escolar.</p>
-          </div>
           <button className="settings-nav" onClick={() => openModal('account')}>
             <Settings size={18} />
             Minha conta

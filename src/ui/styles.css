@@ -1867,3 +1867,180 @@ html[data-theme='dark'] .institution-settings:hover {
     margin-top: 12px;
   }
 }
+
+/* Shared, quiet surfaces keep attention on the task. */
+:root {
+  --ink: #203a30;
+  --green: #216d52;
+  --line: #e3e9e5;
+  background: #f8faf8;
+}
+body {
+  line-height: 1.5;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+h2 {
+  font-weight: 650;
+}
+.eyebrow {
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+.brand {
+  font-size: 25px;
+  letter-spacing: -1px;
+}
+.brand-icon {
+  width: 33px;
+  height: 33px;
+  border-radius: 9px;
+}
+.primary,
+.secondary {
+  min-height: 44px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+.sidebar {
+  padding-top: 26px;
+}
+.institution {
+  margin: 28px 0 26px;
+}
+nav button {
+  min-height: 44px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+.topbar {
+  height: 68px;
+}
+.main-content {
+  padding-top: 34px;
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+}
+.panel,
+.stat,
+.personal-notice-card {
+  box-shadow: none;
+  border-radius: 10px;
+}
+.stats-grid {
+  gap: 12px;
+}
+.stat {
+  min-height: 120px;
+}
+.dashboard-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.panel-heading p {
+  margin-bottom: 0;
+}
+.auth-shell {
+  display: block;
+}
+.auth-main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 80px 24px 40px;
+}
+.auth-form {
+  width: 100%;
+  max-width: 400px;
+}
+.auth-brand {
+  margin-bottom: 42px;
+}
+.auth-form h1 {
+  margin-bottom: 8px;
+}
+.auth-form > .muted {
+  margin-bottom: 28px;
+}
+.auth-form form {
+  gap: 17px;
+}
+input,
+select,
+textarea {
+  border-radius: 8px;
+}
+.modal {
+  border-radius: 12px;
+}
+.theme-toggle {
+  box-shadow: none;
+  border-radius: 8px;
+}
+html[data-theme='dark'] {
+  --ink: #e2ebe5;
+  --green: #64bd96;
+  --line: #36483e;
+}
+html[data-theme='dark'] nav button:hover,
+html[data-theme='dark'] .icon-button:hover {
+  background: #26372d;
+}
+@media (max-width: 620px) {
+  h1 {
+    font-size: 24px;
+  }
+  .sidebar {
+    padding: max(16px, env(safe-area-inset-top)) 16px 12px;
+  }
+  .sidebar nav {
+    padding-bottom: 2px;
+  }
+  .sidebar nav button {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  .sidebar nav button svg {
+    width: 18px;
+    height: 18px;
+  }
+  .topbar {
+    height: 50px;
+  }
+  .main-content {
+    padding: 24px 16px max(32px, env(safe-area-inset-bottom));
+  }
+  .page-heading {
+    margin-bottom: 20px;
+  }
+  .page-heading p {
+    font-size: 13px;
+  }
+  .stats-grid {
+    gap: 10px;
+  }
+  .stat {
+    min-height: 112px;
+  }
+  .stat > div > span:first-child {
+    font-size: 10px;
+  }
+  .stat > small {
+    font-size: 10px;
+  }
+  .notice-main strong {
+    font-size: 13px;
+  }
+  .auth-main {
+    padding: 74px 24px 36px;
+  }
+  .auth-form {
+    max-width: 400px;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
