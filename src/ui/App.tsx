@@ -1,4 +1,5 @@
 import { createInstitution, institutionTextColor } from '../domain/institution';
+import { categoryColor, categoryIcon } from './categoryIcons';
 import AccountDialog from './dialogs/AccountDialog';
 import ArchiveDialog from './dialogs/ArchiveDialog';
 import DeleteDraftDialog from './dialogs/DeleteDraftDialog';
@@ -815,22 +816,32 @@ export default function App() {
                       />
                     </section>
                   ) : (
-                    categories.map((c) => (
-                      <section className="panel category-card" key={c.id}>
-                        <span className="category-icon">
-                          <Tags size={22} />
-                        </span>
-                        <span className="badge">{c.archived ? 'Arquivada' : 'Ativa'}</span>
-                        <h2>{c.name}</h2>
-                        <p>
-                          {members.filter((m) => m.active && m.categoryIds.includes(c.id)).length}{' '}
-                          pessoas vinculadas
-                        </p>
-                        <button className="text-button" onClick={() => openModal('category', c.id)}>
-                          Gerenciar categoria <ArrowUpRight size={16} />
-                        </button>
-                      </section>
-                    ))
+                    categories.map((c) => {
+                      const Icon = categoryIcon(c.icon);
+                      const color = categoryColor(c.color);
+                      return (
+                        <section className="panel category-card" key={c.id}>
+                          <span
+                            className="category-icon"
+                            style={{ color, backgroundColor: `${color}20` }}
+                          >
+                            <Icon size={22} />
+                          </span>
+                          <span className="badge">{c.archived ? 'Arquivada' : 'Ativa'}</span>
+                          <h2>{c.name}</h2>
+                          <p>
+                            {members.filter((m) => m.active && m.categoryIds.includes(c.id)).length}{' '}
+                            pessoas vinculadas
+                          </p>
+                          <button
+                            className="text-button"
+                            onClick={() => openModal('category', c.id)}
+                          >
+                            Gerenciar categoria <ArrowUpRight size={16} />
+                          </button>
+                        </section>
+                      );
+                    })
                   )}
                 </div>
               )}

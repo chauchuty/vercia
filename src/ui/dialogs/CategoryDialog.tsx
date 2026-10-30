@@ -1,6 +1,7 @@
 import type { DialogProps } from './types';
 import { Modal } from '../components';
 import { uid, input } from '../helpers';
+import { categoryIcons, categoryColor, type CategoryIconName } from '../categoryIcons';
 export default function CategoryDialog({
   modal,
   manager,
@@ -54,6 +55,8 @@ export default function CategoryDialog({
                   institutionId: inst,
                   name,
                   archived: f.has('archived'),
+                  icon: Object.hasOwn(categoryIcons, input(f, 'icon')) ? input(f, 'icon') : 'tags',
+                  color: categoryColor(input(f, 'color')),
                 };
                 commit({
                   ...data,
@@ -74,6 +77,35 @@ export default function CategoryDialog({
                 required
                 defaultValue={categories.find((c) => c.id === selected)?.name}
                 placeholder="Ex.: Professores"
+              />
+            </label>
+            <fieldset className="category-icon-picker">
+              <legend>Ícone da categoria</legend>
+              <div className="category-icon-options">
+                {(Object.keys(categoryIcons) as CategoryIconName[]).map((key) => {
+                  const { icon: Icon, label } = categoryIcons[key];
+                  const existing = categories.find((c) => c.id === selected)?.icon;
+                  const chosen =
+                    existing && Object.hasOwn(categoryIcons, existing) ? existing : 'tags';
+                  return (
+                    <label key={key} className="category-icon-option" title={label}>
+                      <input type="radio" name="icon" value={key} defaultChecked={chosen === key} />
+                      <span>
+                        <Icon size={20} />
+                        <span className="sr-only">{label}</span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+            <label>
+              Cor da categoria
+              <input
+                type="color"
+                name="color"
+                className="color-picker"
+                defaultValue={categoryColor(categories.find((c) => c.id === selected)?.color)}
               />
             </label>
             {selected && (

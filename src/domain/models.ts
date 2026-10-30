@@ -35,6 +35,8 @@ export interface Category {
   institutionId: string;
   name: string;
   archived: boolean;
+  icon?: string;
+  color?: string;
 }
 export interface Invite {
   id: string;
