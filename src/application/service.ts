@@ -28,19 +28,31 @@ export function validInvite(invite: Invite) {
   return !invite.used && !invite.revoked && new Date(invite.expiresAt).getTime() > Date.now();
 }
 export function recipients(db: Database, notice: Notice): Membership[] {
-  return db.memberships.filter(
+  const matches = db.memberships.filter(
     (m) =>
       m.institutionId === notice.institutionId &&
       membershipIsActive(m) &&
       !db.users.some((u) => u.id === m.userId && u.isAdministrator) &&
-      (notice.audience === 'all' || m.categoryIds.some((id) => notice.categoryIds.includes(id))),
+      (notice.audience === 'all' ||
+        (notice.audience === 'categories'
+          ? m.categoryIds.some((id) => notice.categoryIds.includes(id))
+          : m.role === 'member' && (notice.recipientIds || []).includes(m.userId))),
   );
+  const unique = new Map(matches.map((membership) => [membership.userId, membership]));
+  return [...unique.values()];
 }
 export function publishNotice(db: Database, userId: string, notice: Notice): Notice {
   requireManager(db, userId, notice.institutionId);
   if (notice.status !== 'draft') throw Error('Somente rascunhos podem ser publicados.');
   if (!notice.title.trim() || !notice.body.trim()) throw Error('Preencha título e mensagem.');
   const audience = recipients(db, notice);
+  if (
+    notice.audience === 'individuals' &&
+    new Set(notice.recipientIds || []).size !== audience.length
+  )
+    throw Error(
+      'Uma pessoa selecionada não possui acesso ativo nesta instituição. Revise os destinatários.',
+    );
   if (!audience.length) throw Error('Nenhum destinatário ativo selecionado.');
   return {
     ...notice,

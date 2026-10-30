@@ -61,6 +61,39 @@ function fixture(): Database {
   };
 }
 describe('Publicação e ciência', () => {
+  it('envia somente para as pessoas selecionadas, sem duplicar entregas', () => {
+    const db = fixture();
+    db.memberships.push({
+      id: 'd',
+      userId: 'diana',
+      institutionId: 'school',
+      role: 'member',
+      active: true,
+      categoryIds: [],
+    });
+    const individual = {
+      ...draft,
+      audience: 'individuals' as const,
+      recipientIds: ['alice', 'diana', 'alice'],
+    };
+    expect(publishNotice(db, 'manager', individual).receipts).toEqual([
+      { userId: 'alice' },
+      { userId: 'diana' },
+    ]);
+  });
+  it('rejeita pessoas inativas ou de outra instituição e seleção vazia', () => {
+    const db = fixture();
+    const individual = { ...draft, audience: 'individuals' as const };
+    expect(() =>
+      publishNotice(db, 'manager', { ...individual, recipientIds: ['alice', 'bob'] }),
+    ).toThrow('acesso ativo');
+    expect(() => publishNotice(db, 'manager', { ...individual, recipientIds: ['carol'] })).toThrow(
+      'acesso ativo',
+    );
+    expect(() => publishNotice(db, 'manager', { ...individual, recipientIds: [] })).toThrow(
+      'destinatário',
+    );
+  });
   it('deduplica destinatários e respeita instituição e vínculos ativos', () => {
     const notice = publishNotice(fixture(), 'manager', draft);
     expect(notice.receipts).toEqual([{ userId: 'alice' }]);

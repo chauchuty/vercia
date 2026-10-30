@@ -492,14 +492,17 @@ export default function App() {
         body: input(f, 'body'),
         priority: input(f, 'priority') as Priority,
         requiresConfirmation: f.has('confirmation'),
-        audience: input(f, 'audience') as 'all' | 'categories',
+        audience: input(f, 'audience') as 'all' | 'categories' | 'individuals',
         categoryIds: f.getAll('categories').map(String),
+        recipientIds: f.getAll('recipientIds').map(String),
         status: 'draft',
         createdAt: old?.createdAt || new Date().toISOString(),
         receipts: [],
       };
       if (notice.audience === 'categories' && !notice.categoryIds.length)
         throw Error('Selecione pelo menos uma categoria.');
+      if (notice.audience === 'individuals' && !notice.recipientIds?.length)
+        throw Error('Selecione pelo menos uma pessoa.');
       if (publish) notice = publishNotice(data, actor.id, notice);
       commit({
         ...data,

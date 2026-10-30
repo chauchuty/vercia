@@ -21,13 +21,13 @@ npm test
 1. Entre com a conta Administrador e crie uma conta de gestor. Entre com essa conta para criar, selecionar e configurar instituições.
 2. O gestor cria categorias e gera convites de usuário pelo e-mail das pessoas, escolhendo categorias e, opcionalmente, a data final de acesso. O acesso é válido até o fim do dia selecionado no horário local do navegador; a validade do link de convite é independente.
 3. Copie o link do convite e saia da conta gestora. Abra o link no **mesmo navegador e origem** para cadastrar o usuário ou entrar em uma conta existente. Não existe SMTP.
-4. Entre novamente como gestor, ajuste categorias e validade na tela Pessoas se necessário e publique uma notificação para todos ou para categorias selecionadas.
+4. Entre novamente como gestor, ajuste categorias e validade na tela Pessoas se necessário e publique uma notificação para todos, para categorias ou para pessoas selecionadas individualmente.
 5. Entre como destinatário. A caixa mostra somente o título e o ícone de prioridade. Abra para registrar acesso e confirme ciência, se solicitado.
 6. Consulte as aberturas e confirmações na tela Notificações do gestor.
 
 A aba Relatórios do administrador mostra os gestores, suas instituições, contagens por instituição e atividades registradas neste navegador. O painel do administrador registra alterações feitas por gestores em instituições, vínculos, categorias, convites e notificações a partir desta atualização. O histórico fica no mesmo armazenamento local e não recupera atividades anteriores.
 
-Os destinatários ficam fixos na publicação. Uma pessoa em várias categorias recebe apenas uma entrega. Rascunhos podem ser editados e excluídos; publicações podem ser arquivadas e desarquivadas, mantendo os registros de leitura. Categorias e vínculos podem ser desativados. O último gestor ativo não pode ser removido. Uma conta pode aceitar convites de mais de uma instituição, com seleção de instituição na barra lateral.
+O gestor pode buscar pessoas por nome ou e-mail ao selecionar destinatários individuais. Apenas usuários com acesso ativo à instituição podem ser selecionados para publicação. Os destinatários ficam fixos na publicação. Uma pessoa em várias categorias recebe apenas uma entrega. Rascunhos podem ser editados e excluídos; publicações podem ser arquivadas e desarquivadas, mantendo os registros de leitura. Categorias e vínculos podem ser desativados. O último gestor ativo não pode ser removido. Uma conta pode aceitar convites de mais de uma instituição, com seleção de instituição na barra lateral.
 
 A área do usuário é adaptada para celular: reúne as notificações em cartões, com filtros para mensagens não lidas e confirmações pendentes, acesso à conta e troca de instituição quando necessário.
 

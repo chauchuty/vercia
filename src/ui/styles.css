@@ -2622,3 +2622,25 @@ html[data-theme='dark'] .institution-picker-list button:hover {
     padding: 12px;
   }
 }
+
+.recipient-options {
+  display: grid;
+  gap: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 12px;
+}
+.recipient-option {
+  padding: 8px 4px;
+}
+.recipient-option span,
+.recipient-option small {
+  display: block;
+}
+.recipient-option small {
+  color: #7a8880;
+  overflow-wrap: anywhere;
+}
+[hidden] {
+  display: none !important;
+}

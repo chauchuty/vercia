@@ -65,8 +65,9 @@ export interface Notice {
   body: string;
   priority: Priority;
   requiresConfirmation: boolean;
-  audience: 'all' | 'categories';
+  audience: 'all' | 'categories' | 'individuals';
   categoryIds: string[];
+  recipientIds?: string[];
   status: 'draft' | 'published' | 'archived';
   createdAt: string;
   publishedAt?: string;
