@@ -2820,3 +2820,117 @@ html[data-theme] .color-slider input[type='range'] {
   );
   border: 0;
 }
+
+/* Theme control remains within each screen's header. */
+.theme-toggle {
+  position: static;
+  width: auto;
+  min-height: 40px;
+  flex-shrink: 0;
+}
+.topbar {
+  padding-right: 43px;
+}
+.user-header {
+  padding-right: 20px;
+}
+.user-account {
+  margin-left: 0;
+}
+.user-header-brand {
+  margin-right: auto;
+}
+.standalone-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 60px;
+  padding: max(8px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 8px;
+  border-bottom: 1px solid var(--line);
+  background: #f2f5f1;
+}
+html[data-theme='dark'] .standalone-topbar {
+  background: #1c2a23;
+}
+.auth-main {
+  min-height: calc(100dvh - 60px) !important;
+}
+body:has(.overlay) .theme-toggle {
+  visibility: visible;
+}
+.notice-conversation {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 22px;
+}
+.notice-conversation > label,
+.conversation-form label {
+  display: grid;
+  gap: 8px;
+}
+.conversation-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.conversation-list li {
+  padding: 12px;
+  border-radius: 9px;
+  background: #edf2ee;
+  overflow-wrap: anywhere;
+}
+.conversation-list li.own {
+  background: #e1eee5;
+}
+.conversation-list li > div {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.conversation-list time {
+  font-size: 11px;
+  color: #677d6d;
+}
+.conversation-list p {
+  white-space: pre-wrap;
+  margin: 7px 0 0;
+}
+.conversation-form {
+  margin-top: 16px;
+}
+html[data-theme='dark'] .conversation-list li {
+  background: #273a2e;
+}
+html[data-theme='dark'] .conversation-list li.own {
+  background: #30513c;
+}
+html[data-theme='dark'] .conversation-list time {
+  color: #bccfc1;
+}
+@media (max-width: 620px) {
+  .topbar {
+    padding-right: 16px;
+  }
+  .topbar > div {
+    gap: 6px;
+  }
+  .user-header {
+    padding-right: 16px;
+  }
+  .theme-toggle span {
+    display: none;
+  }
+  .theme-toggle {
+    width: 44px;
+    padding: 0;
+  }
+  .standalone-topbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

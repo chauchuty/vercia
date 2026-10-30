@@ -15,6 +15,7 @@ import InstitutionSetup from './InstitutionSetup';
 import InstitutionPicker from './InstitutionPicker';
 import AuthScreen from './AuthScreen';
 import UserWorkspace from './UserWorkspace';
+import ThemeToggle from './ThemeToggle';
 import { Pagination } from './Pagination';
 import AdminScreen from './AdminScreen';
 import NoticeTable from './NoticeTable';
@@ -672,6 +673,7 @@ export default function App() {
             <strong>{nav.find((n) => n.id === page)?.label}</strong>
           </span>
           <div>
+            <ThemeToggle />
             <span className="local-chip">
               <span className="status-dot" />
               Ambiente local

@@ -1,3 +1,4 @@
+import ThemeToggle from './ThemeToggle';
 import PasswordInput from './PasswordInput';
 import type { FormEvent, ReactNode } from 'react';
 import { ArrowUpRight, Bell } from 'lucide-react';
@@ -27,6 +28,9 @@ export default function AuthScreen({
 }: Props) {
   return (
     <div className="auth-shell">
+      <header className="standalone-topbar">
+        <ThemeToggle />
+      </header>
       <main className="auth-main">
         <div className="auth-form">
           <div className="brand auth-brand">

@@ -4,6 +4,7 @@ import { date } from '../helpers';
 import { priorities } from '../../domain/models';
 import { recordReceipt } from '../../application/service';
 import { Check, ShieldCheck, CheckCheck } from 'lucide-react';
+import NoticeConversation from '../NoticeConversation';
 export default function ReadingDialog({
   modal,
   currentNotice,
@@ -74,6 +75,15 @@ export default function ReadingDialog({
               </div>
             );
           })()}
+          <NoticeConversation
+            data={data}
+            notice={currentNotice}
+            user={user}
+            manager={false}
+            busy={busy}
+            run={run}
+            commit={commit}
+          />
         </Modal>
       )}
     </>

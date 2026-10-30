@@ -4,11 +4,14 @@ import { date } from '../helpers';
 import { priorities } from '../../domain/models';
 import { Archive, ArchiveRestore } from 'lucide-react';
 import { Pagination, usePagination } from '../Pagination';
+import NoticeConversation from '../NoticeConversation';
 export default function NoticeReport({
   modal,
   manager,
   currentNotice,
   data,
+  user,
+  busy,
   errorBox,
   run,
   manage,
@@ -22,6 +25,8 @@ export default function NoticeReport({
   | 'manager'
   | 'currentNotice'
   | 'data'
+  | 'user'
+  | 'busy'
   | 'errorBox'
   | 'close'
   | 'openModal'
@@ -103,6 +108,15 @@ export default function NoticeReport({
             </div>
           )}
           <p className="help">Os destinatários foram fixados no momento da publicação.</p>
+          <NoticeConversation
+            data={data}
+            notice={currentNotice}
+            user={user}
+            manager
+            busy={busy}
+            run={run}
+            commit={commit}
+          />
         </Modal>
       )}
     </>

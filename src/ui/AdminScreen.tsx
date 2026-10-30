@@ -9,6 +9,7 @@ import {
   Users,
 } from 'lucide-react';
 import PasswordInput from './PasswordInput';
+import ThemeToggle from './ThemeToggle';
 import AdminReports from './AdminReports';
 import type { Database, User } from '../domain/models';
 import { date } from './helpers';
@@ -108,6 +109,7 @@ export default function AdminScreen({
             </strong>
           </span>
           <div className="admin-topbar-actions">
+            <ThemeToggle />
             <button className="icon-button" aria-label="Minha conta" onClick={onAccount}>
               <Settings size={19} />
             </button>

@@ -67,6 +67,21 @@ export default function NoticeTable({
                         {n.status === 'draft' ? 'Rascunho' : `${n.receipts.length} destinatários`}
                         <span>·</span>
                         {day(n.createdAt)}
+                        {(n.messages || []).some(
+                          (message) => message.authorId === message.threadUserId,
+                        ) && (
+                          <>
+                            <span>·</span>
+                            {
+                              new Set(
+                                (n.messages || [])
+                                  .filter((message) => message.authorId === message.threadUserId)
+                                  .map((message) => message.threadUserId),
+                              ).size
+                            }{' '}
+                            conversa(s)
+                          </>
+                        )}
                       </small>
                     )}
                   </div>

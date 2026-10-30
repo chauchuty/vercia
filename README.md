@@ -40,6 +40,8 @@ A área do usuário é adaptada para celular: reúne as notificações em cartõ
 
 Senhas são derivadas com PBKDF2/SHA-256, salt individual e 210 mil iterações. A troca de senha exige a senha atual; o gestor pode redefinir a senha de uma conta vinculada, com aviso de que a conta é compartilhada entre instituições.
 
+Usuários podem iniciar uma conversa privada por destinatário dentro de uma notificação, e o gestor pode responder no relatório da notificação. As mensagens ficam apenas no armazenamento local deste navegador; para troca entre pessoas em dispositivos ou navegadores diferentes, será necessário um backend compartilhado.
+
 ## Limites desta versão
 
 Este é um frontend local: dados, convites e permissões podem ser alterados por quem controla o navegador. Não oferece segurança de servidor e não deve armazenar dados pessoais reais em produção. Não há sincronização entre dispositivos ou navegadores, envio de e-mails, recuperação automática de senha nem notificações push. Limpar os dados do site apaga a base local. Senhas alteradas não revogam sessões já abertas em outras abas.

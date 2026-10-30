@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { Database, Institution, Membership, Notice, User } from '../domain/models';
 import { institutionTextColor } from '../domain/institution';
 import { Empty, PriorityIcon } from './components';
+import ThemeToggle from './ThemeToggle';
 
 type Filter = 'all' | 'unread' | 'pending';
 interface Props {
@@ -54,6 +55,7 @@ export default function UserWorkspace({
             vercia<span>.</span>
           </strong>
         </div>
+        <ThemeToggle />
         <button className="user-account" type="button" aria-label="Minha conta" onClick={onAccount}>
           <UserRound size={19} />
         </button>

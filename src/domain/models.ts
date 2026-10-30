@@ -57,6 +57,13 @@ export interface Receipt {
   openedAt?: string;
   confirmedAt?: string;
 }
+export interface NoticeMessage {
+  id: string;
+  threadUserId: string;
+  authorId: string;
+  body: string;
+  createdAt: string;
+}
 export interface Notice {
   id: string;
   institutionId: string;
@@ -72,6 +79,7 @@ export interface Notice {
   createdAt: string;
   publishedAt?: string;
   receipts: Receipt[];
+  messages?: NoticeMessage[];
 }
 export interface Database {
   version: 2;

@@ -6,6 +6,7 @@ import {
   recordReceipt,
   validInvite,
   requireManager,
+  sendNoticeMessage,
 } from './service';
 const draft: Notice = {
   id: 'n',
@@ -133,6 +134,41 @@ describe('Publicação e ciência', () => {
     const db = fixture();
     db.notices = [{ ...publishNotice(db, 'manager', draft), status: 'archived' }];
     expect(() => recordReceipt(db, 'alice', 'n')).toThrow('acesso');
+  });
+});
+describe('Mensagens de notificações', () => {
+  const message = {
+    id: 'message',
+    threadUserId: 'alice',
+    authorId: 'alice',
+    body: 'Olá',
+    createdAt: '2026-01-01T12:00:00Z',
+  };
+  function withNotice() {
+    const db = fixture();
+    db.notices = [publishNotice(db, 'manager', draft)];
+    return db;
+  }
+  it('permite que o destinatário inicie e o gestor responda na mesma conversa', () => {
+    const db = sendNoticeMessage(withNotice(), 'alice', 'n', message);
+    const replied = sendNoticeMessage(db, 'manager', 'n', {
+      ...message,
+      id: 'reply',
+      authorId: 'manager',
+      body: 'Resposta',
+    });
+    expect(replied.notices[0].messages?.map((m) => m.body)).toEqual(['Olá', 'Resposta']);
+  });
+  it('impede acesso de terceiros, resposta sem conversa e envio em notificação arquivada', () => {
+    const db = withNotice();
+    expect(() => sendNoticeMessage(db, 'bob', 'n', { ...message, authorId: 'bob' })).toThrow(
+      'acesso',
+    );
+    expect(() =>
+      sendNoticeMessage(db, 'manager', 'n', { ...message, authorId: 'manager' }),
+    ).toThrow('iniciada');
+    db.notices[0].status = 'archived';
+    expect(() => sendNoticeMessage(db, 'alice', 'n', message)).toThrow('publicadas');
   });
 });
 describe('Validade de convites', () => {
