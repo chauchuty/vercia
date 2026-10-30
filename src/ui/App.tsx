@@ -401,6 +401,7 @@ export default function App() {
     (m) =>
       m.institutionId === inst && !data.users.some((u) => u.id === m.userId && u.isAdministrator),
   );
+  const people = members.filter((m) => m.userId !== user.id);
   const categories = data.categories.filter((c) => c.institutionId === inst);
   const invites = data.invites.filter((i) => i.institutionId === inst);
   const published = notices.filter((n) => n.status === 'published');
@@ -740,7 +741,7 @@ export default function App() {
                 <section className="panel">
                   <div className="panel-heading">
                     <h2>
-                      Pessoas da instituição <span className="count">{members.length}</span>
+                      Pessoas da instituição <span className="count">{people.length}</span>
                     </h2>
                   </div>
                   <div className="table-wrap">
@@ -757,7 +758,7 @@ export default function App() {
                         </tr>
                       </thead>
                       <tbody>
-                        {members.map((m) => {
+                        {people.map((m) => {
                           const u = data.users.find((u) => u.id === m.userId)!;
                           return (
                             <tr key={m.id}>
