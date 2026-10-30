@@ -34,18 +34,33 @@ export default function NoticeEditor({
 >) {
   const [audience, setAudience] = useState<'all' | 'categories' | 'individuals'>('all');
   const [search, setSearch] = useState('');
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   useEffect(() => {
     if (modal === 'compose') {
       setAudience(currentNotice?.audience || 'all');
       setSearch('');
+      setSelectedPeople(currentNotice?.recipientIds || []);
     }
   }, [modal, selected]);
-  const available = members.filter(
-    (member) =>
-      member.role === 'member' &&
-      (membershipIsActive(member) || currentNotice?.recipientIds?.includes(member.userId)) &&
-      data.users.some((user) => user.id === member.userId && !user.isAdministrator),
-  );
+  const available = members
+    .filter(
+      (member) =>
+        member.role === 'member' &&
+        (membershipIsActive(member) || currentNotice?.recipientIds?.includes(member.userId)) &&
+        data.users.some((user) => user.id === member.userId && !user.isAdministrator),
+    )
+    .sort((a, b) =>
+      (data.users.find((user) => user.id === a.userId)?.name || '').localeCompare(
+        data.users.find((user) => user.id === b.userId)?.name || '',
+        'pt-BR',
+      ),
+    );
+  const normalize = (value: string) =>
+    value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase();
+  const query = normalize(search.trim());
   return (
     <>
       {modal === 'compose' && manager && (
@@ -117,7 +132,7 @@ export default function NoticeEditor({
                 <p className="muted">Nenhuma categoria ativa.</p>
               )}
             </fieldset>
-            <fieldset hidden={audience !== 'individuals'}>
+            <fieldset className="recipient-picker" hidden={audience !== 'individuals'}>
               <legend>Selecionar pessoas</legend>
               <label>
                 Buscar pessoa
@@ -128,13 +143,16 @@ export default function NoticeEditor({
                   placeholder="Nome ou e-mail"
                 />
               </label>
+              <p className="recipient-selection-count" role="status">
+                {selectedPeople.length === 1
+                  ? '1 pessoa selecionada'
+                  : `${selectedPeople.length} pessoas selecionadas`}
+              </p>
               <div className="recipient-options">
                 {available.map((member) => {
                   const person = data.users.find((user) => user.id === member.userId)!;
                   const active = membershipIsActive(member);
-                  const matches = `${person.name} ${person.email}`
-                    .toLocaleLowerCase()
-                    .includes(search.trim().toLocaleLowerCase());
+                  const matches = normalize(`${person.name} ${person.email}`).includes(query);
                   return (
                     <label
                       className="check-label recipient-option"
@@ -145,7 +163,13 @@ export default function NoticeEditor({
                         type="checkbox"
                         name="recipientIds"
                         value={person.id}
-                        defaultChecked={currentNotice?.recipientIds?.includes(person.id)}
+                        checked={selectedPeople.includes(person.id)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setSelectedPeople((ids) =>
+                            checked ? [...ids, person.id] : ids.filter((id) => id !== person.id),
+                          );
+                        }}
                       />
                       <span>
                         <strong>{person.name}</strong>
@@ -163,9 +187,7 @@ export default function NoticeEditor({
                 {available.length > 0 &&
                   !available.some((m) => {
                     const p = data.users.find((u) => u.id === m.userId)!;
-                    return `${p.name} ${p.email}`
-                      .toLocaleLowerCase()
-                      .includes(search.trim().toLocaleLowerCase());
+                    return normalize(`${p.name} ${p.email}`).includes(query);
                   }) && <p className="muted">Nenhuma pessoa encontrada.</p>}
               </div>
             </fieldset>

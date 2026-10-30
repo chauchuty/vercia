@@ -2934,3 +2934,41 @@ html[data-theme='dark'] .conversation-list time {
     padding-right: 16px;
   }
 }
+
+.recipient-picker {
+  display: block;
+  min-width: 0;
+}
+.recipient-picker > label {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+.recipient-picker input[type='search'] {
+  width: 100%;
+  min-width: 0;
+}
+.recipient-selection-count {
+  margin: 12px 0 0;
+  color: #72857a;
+  font-size: 12px;
+}
+.recipient-picker .recipient-options {
+  margin-top: 6px;
+}
+.recipient-picker .recipient-option {
+  width: 100%;
+  min-height: 54px;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 4px;
+}
+.recipient-picker .recipient-option:last-child {
+  border-bottom: 0;
+}
+.recipient-option > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+html[data-theme='dark'] .recipient-selection-count {
+  color: #baccc0;
+}
