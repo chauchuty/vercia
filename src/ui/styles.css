@@ -2694,3 +2694,31 @@ html[data-theme='dark'] .institution-picker-list button:hover {
     min-width: 70px;
   }
 }
+
+.institution-edit {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  padding-right: 8px;
+  border-radius: 8px;
+}
+.institution-edit:hover {
+  background: #e8eee9;
+}
+html[data-theme='dark'] .institution-edit:hover {
+  background: #26372d;
+}
+.institution-edit .institution-label {
+  flex: 1;
+  min-width: 0;
+}
+.institution-edit strong {
+  max-width: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 620px) {
+  .sidebar .institution-edit {
+    padding-right: 10px;
+  }
+}

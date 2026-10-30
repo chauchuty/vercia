@@ -34,7 +34,6 @@ import {
   ChevronRight,
   Building2,
   AlertTriangle,
-  Settings,
   Copy,
   Send,
 } from 'lucide-react';
@@ -584,8 +583,16 @@ export default function App() {
           </span>
           vercia<span className="brand-dot">.</span>
         </div>
-        <div className="institution">
-          <div
+        <button
+          type="button"
+          className="institution institution-edit"
+          aria-label={`Editar instituição ${institution?.name || ''}`}
+          onClick={() => {
+            setEditingInstitution(true);
+            setCreatingInstitution(true);
+          }}
+        >
+          <span
             className="institution-symbol"
             style={
               institution
@@ -598,25 +605,12 @@ export default function App() {
             aria-label={institution ? `Sigla ${institution.acronym}` : undefined}
           >
             {institution?.acronym || <Building2 size={21} />}
-          </div>
-          <div>
+          </span>
+          <span className="institution-label">
             <strong>{institution?.name || 'Sem instituição'}</strong>
             <small>{manager ? 'Espaço de gestão' : 'Comunidade escolar'}</small>
-          </div>
-          {manager && (
-            <button
-              className="institution-settings"
-              aria-label="Configurar instituição"
-              title="Configurar instituição"
-              onClick={() => {
-                setEditingInstitution(true);
-                setCreatingInstitution(true);
-              }}
-            >
-              <Settings size={16} />
-            </button>
-          )}
-        </div>
+          </span>
+        </button>
         <button
           className="institution-switch text-button"
           onClick={() => {
