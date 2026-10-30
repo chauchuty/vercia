@@ -26,7 +26,11 @@ export default function NoticeConversation({
   const [thread, setThread] = useState('');
   const [composing, setComposing] = useState(false);
   const [messageError, setMessageError] = useState('');
-  useEffect(() => setThread(''), [notice.id]);
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    setThread('');
+    setExpanded(false);
+  }, [notice.id]);
   const messages = notice.messages || [];
   const threadIds = [
     ...new Set(messages.filter((m) => m.authorId === m.threadUserId).map((m) => m.threadUserId)),
@@ -59,23 +63,32 @@ export default function NoticeConversation({
         <p className="help">Nenhum destinatário enviou mensagem ainda.</p>
       ) : (
         <>
-          {visible.length ? (
-            <ol className="conversation-list">
-              {visible.map((message) => (
-                <li key={message.id} className={message.authorId === user.id ? 'own' : ''}>
-                  <div>
-                    <strong>
-                      {data.users.find((u) => u.id === message.authorId)?.name || 'Usuário'}
-                    </strong>
-                    <time dateTime={message.createdAt}>{date(message.createdAt)}</time>
-                  </div>
-                  <p>{message.body}</p>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p className="help">Nenhuma mensagem nesta conversa.</p>
-          )}
+          <details
+            className="conversation-accordion"
+            open={expanded}
+            onToggle={(event) => setExpanded(event.currentTarget.open)}
+          >
+            <summary>
+              Visualizar conversa <span>({visible.length})</span>
+            </summary>
+            {visible.length ? (
+              <ol className="conversation-list">
+                {visible.map((message) => (
+                  <li key={message.id} className={message.authorId === user.id ? 'own' : ''}>
+                    <div>
+                      <strong>
+                        {data.users.find((u) => u.id === message.authorId)?.name || 'Usuário'}
+                      </strong>
+                      <time dateTime={message.createdAt}>{date(message.createdAt)}</time>
+                    </div>
+                    <p>{message.body}</p>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="help">Nenhuma mensagem nesta conversa.</p>
+            )}
+          </details>
           {notice.status === 'published' ? (
             <button
               type="button"
@@ -114,6 +127,7 @@ export default function NoticeConversation({
                     );
                     setComposing(false);
                     setMessageError('');
+                    setExpanded(true);
                   } catch (error) {
                     setMessageError((error as Error).message);
                   }
