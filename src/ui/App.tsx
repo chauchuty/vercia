@@ -635,7 +635,9 @@ export default function App() {
                   </h1>
                   <p>
                     {page === 'dashboard'
-                      ? 'Veja como anda a comunicação da sua instituição.'
+                      ? manager
+                        ? 'Veja como anda a comunicação da sua instituição.'
+                        : 'Confira as mensagens da sua instituição.'
                       : (
                           {
                             inbox: 'Tudo o que você precisa saber, em um só lugar.',

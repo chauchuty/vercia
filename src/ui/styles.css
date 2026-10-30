@@ -1576,3 +1576,87 @@ html[data-theme='dark'] .tabs button.selected {
   background: #315343;
   color: #d9f5e2;
 }
+
+.personal-dashboard {
+  max-width: 760px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.personal-dashboard-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 15px;
+}
+.personal-dashboard-heading h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.personal-dashboard-heading > span {
+  color: #788b7e;
+  font-size: 12px;
+}
+.personal-notice-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.personal-notice-card {
+  width: 100%;
+  min-height: 76px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  box-shadow: 0 2px 8px #173c2e08;
+}
+.personal-notice-card:hover {
+  border-color: #9dc7ac;
+  background: #f8fbf8;
+}
+.personal-notice-card strong {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.personal-notice-card > svg {
+  flex-shrink: 0;
+  color: #8a9c90;
+}
+html[data-theme='dark'] .personal-notice-card {
+  background: #1c2a23;
+  border-color: #394d40;
+  color: #e2ebe5;
+}
+html[data-theme='dark'] .personal-notice-card:hover {
+  background: #26372d;
+}
+.topbar {
+  padding-right: 140px;
+}
+@media (max-width: 620px) {
+  .sidebar .institution {
+    display: none;
+  }
+  .topbar {
+    padding-right: 18px;
+  }
+  .personal-dashboard {
+    max-width: none;
+  }
+  .personal-notice-card {
+    min-height: 72px;
+    padding: 14px;
+  }
+  .personal-notice-card strong {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}

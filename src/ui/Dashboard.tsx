@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { Notice, Membership, User } from '../domain/models';
 import NoticeTable from './NoticeTable';
+import { Empty, PriorityIcon } from './components';
 interface Props {
   user: User;
   manager: boolean;
@@ -49,6 +50,39 @@ export default function Dashboard({
     0,
   );
   const percent = receiptTotal ? Math.round((openedTotal / receiptTotal) * 100) : 0;
+  if (!manager) {
+    const ordered = [...mine].sort((a, b) =>
+      (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt),
+    );
+    return (
+      <section className="personal-dashboard" aria-labelledby="personal-notices-title">
+        <div className="personal-dashboard-heading">
+          <h2 id="personal-notices-title">Suas notificações</h2>
+          <span>{ordered.length}</span>
+        </div>
+        {ordered.length ? (
+          <ul className="personal-notice-list">
+            {ordered.map((notice) => (
+              <li key={notice.id}>
+                <button className="personal-notice-card" onClick={() => onOpen(notice)}>
+                  <PriorityIcon value={notice.priority} />
+                  <strong>{notice.title}</strong>
+                  <ChevronRight size={20} aria-hidden="true" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="panel">
+            <Empty
+              title="Nenhuma notificação por enquanto"
+              description="Quando houver uma mensagem para você, ela aparecerá aqui."
+            />
+          </div>
+        )}
+      </section>
+    );
+  }
   return (
     <>
       <div className="stats-grid">
