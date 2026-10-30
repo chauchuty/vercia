@@ -2560,6 +2560,11 @@ html[data-theme='light'] .user-filters button.selected {
   width: 100%;
   margin-top: 20px;
 }
+.institution-picker-logout {
+  display: flex;
+  margin: 16px auto 0;
+  min-height: 44px;
+}
 .institution-picker-list {
   list-style: none;
   padding: 0;
