@@ -1,11 +1,19 @@
 import type { Database, Membership, Notice, Invite } from '../domain/models';
+export function membershipIsActive(m: Membership, now = new Date()) {
+  if (!m.active) return false;
+  if (!m.validUntil) return true;
+  const [year, month, day] = m.validUntil.split('-').map(Number);
+  return now.getTime() < new Date(year, month - 1, day + 1).getTime();
+}
 export function requireManager(db: Database, userId: string, institutionId: string) {
+  if (db.users.some((u) => u.id === userId && u.isAdministrator))
+    throw Error('Acesso de gestor necessário.');
   if (
     !db.memberships.some(
       (m) =>
         m.userId === userId &&
         m.institutionId === institutionId &&
-        m.active &&
+        membershipIsActive(m) &&
         m.role === 'manager',
     )
   )
@@ -13,7 +21,7 @@ export function requireManager(db: Database, userId: string, institutionId: stri
 }
 export function activeMembership(db: Database, userId: string, institutionId: string) {
   return db.memberships.find(
-    (m) => m.userId === userId && m.institutionId === institutionId && m.active,
+    (m) => m.userId === userId && m.institutionId === institutionId && membershipIsActive(m),
   );
 }
 export function validInvite(invite: Invite) {
@@ -23,7 +31,8 @@ export function recipients(db: Database, notice: Notice): Membership[] {
   return db.memberships.filter(
     (m) =>
       m.institutionId === notice.institutionId &&
-      m.active &&
+      membershipIsActive(m) &&
+      !db.users.some((u) => u.id === m.userId && u.isAdministrator) &&
       (notice.audience === 'all' || m.categoryIds.some((id) => notice.categoryIds.includes(id))),
   );
 }

@@ -36,7 +36,13 @@ import {
 import type { Database, Notice, Priority, User } from '../domain/models';
 import { loadDatabase, saveDatabase, session, DATABASE_KEY } from '../data/storage';
 import { createUser, normalizeEmail, verifyPassword } from '../application/auth';
-import { publishNotice, recordReceipt, requireManager, validInvite } from '../application/service';
+import {
+  publishNotice,
+  recordReceipt,
+  requireManager,
+  validInvite,
+  membershipIsActive,
+} from '../application/service';
 import { uid, date, input } from './helpers';
 export default function App() {
   const [initial] = useState(() => {
@@ -134,7 +140,7 @@ export default function App() {
     );
   const data = db;
   const user = db.users.find((u) => u.id === userId);
-  const memberships = db.memberships.filter((m) => m.userId === userId && m.active);
+  const memberships = db.memberships.filter((m) => m.userId === userId && membershipIsActive(m));
   const membership = memberships.find((m) => m.institutionId === institutionId) || memberships[0];
   const institution = db.institutions.find((i) => i.id === membership?.institutionId);
   const inst = institution?.id || '';
@@ -177,6 +183,8 @@ export default function App() {
         !(user.isManager || memberships.some((m) => m.role === 'manager'))
       )
         throw Error('Somente gestores podem criar instituições.');
+      if (data.memberships.some((m) => m.userId === user.id && m.role === 'manager'))
+        throw Error('O gestor já possui uma instituição.');
       const name = input(f, 'institution');
       const id = uid();
       const newInstitution = createInstitution(id, name, input(f, 'acronym'), input(f, 'color'));
@@ -206,6 +214,21 @@ export default function App() {
       const invite = data.invites.find((i) => i.id === inviteToken);
       if (!invite || !validInvite(invite))
         throw Error('Convite inválido, expirado, utilizado ou revogado.');
+      if (invite.role !== 'member')
+        throw Error('Este convite antigo de gestor não pode mais ser utilizado.');
+      if (
+        invite.validUntil &&
+        !membershipIsActive({
+          id: '',
+          userId: '',
+          institutionId: '',
+          role: 'member',
+          active: true,
+          categoryIds: [],
+          validUntil: invite.validUntil,
+        })
+      )
+        throw Error('A validade do acesso deste convite já terminou.');
       let u = user;
       let users = data.users;
       if (!u) {
@@ -220,6 +243,12 @@ export default function App() {
         }
       }
       if (u.email !== invite.email) throw Error('Entre com a conta do e-mail convidado.');
+      if (
+        u.isAdministrator ||
+        u.isManager ||
+        data.memberships.some((m) => m.userId === u!.id && m.role === 'manager')
+      )
+        throw Error('Contas de administrador e gestor não podem aceitar convites de usuário.');
       const prior = data.memberships.find(
         (m) => m.userId === u!.id && m.institutionId === invite.institutionId,
       );
@@ -230,7 +259,15 @@ export default function App() {
         invites: data.invites.map((i) => (i.id === invite.id ? { ...i, used: true } : i)),
         memberships: prior
           ? data.memberships.map((m) =>
-              m.id === prior.id ? { ...m, active: true, role: invite.role } : m,
+              m.id === prior.id
+                ? {
+                    ...m,
+                    active: true,
+                    role: 'member',
+                    categoryIds: invite.categoryIds || [],
+                    validUntil: invite.validUntil,
+                  }
+                : m,
             )
           : [
               ...data.memberships,
@@ -238,9 +275,10 @@ export default function App() {
                 id: uid(),
                 userId: u.id,
                 institutionId: invite.institutionId,
-                role: invite.role,
+                role: 'member',
                 active: true,
-                categoryIds: [],
+                categoryIds: invite.categoryIds || [],
+                validUntil: invite.validUntil,
               },
             ],
       });
@@ -322,7 +360,32 @@ export default function App() {
     return (
       <InstitutionSetup
         user={user}
-        onSubmit={setup}
+        onSubmit={
+          creatingInstitution && institution
+            ? (e) => {
+                e.preventDefault();
+                const form = new FormData(e.currentTarget);
+                run(() => {
+                  manage();
+                  const updated = createInstitution(
+                    institution.id,
+                    input(form, 'institution'),
+                    input(form, 'acronym'),
+                    input(form, 'color'),
+                  );
+                  commit({
+                    ...data,
+                    institutions: data.institutions.map((item) =>
+                      item.id === updated.id ? updated : item,
+                    ),
+                  });
+                  setCreatingInstitution(false);
+                  notify('Instituição atualizada.');
+                });
+              }
+            : setup
+        }
+        institution={creatingInstitution ? institution : undefined}
         onLogout={() => {
           session.clear();
           setUserId(null);
@@ -334,7 +397,10 @@ export default function App() {
     );
   const actor = user;
   const notices = data.notices.filter((n) => n.institutionId === inst);
-  const members = data.memberships.filter((m) => m.institutionId === inst);
+  const members = data.memberships.filter(
+    (m) =>
+      m.institutionId === inst && !data.users.some((u) => u.id === m.userId && u.isAdministrator),
+  );
   const categories = data.categories.filter((c) => c.institutionId === inst);
   const invites = data.invites.filter((i) => i.institutionId === inst);
   const published = notices.filter((n) => n.status === 'published');
@@ -465,9 +531,9 @@ export default function App() {
             ))}
           </select>
         )}
-        {(user.isManager || memberships.some((m) => m.role === 'manager')) && (
+        {manager && (
           <button className="settings-nav" onClick={() => setCreatingInstitution(true)}>
-            <Plus size={18} /> Criar instituição
+            <Settings size={18} /> Configurar instituição
           </button>
         )}
         <span className="nav-label">PRINCIPAL</span>
@@ -710,8 +776,14 @@ export default function App() {
                               </td>
                               <td>{m.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
                               <td>
-                                <span className={`badge ${m.active ? 'published' : 'archived'}`}>
-                                  {m.active ? 'Ativo' : 'Inativo'}
+                                <span
+                                  className={`badge ${membershipIsActive(m) ? 'published' : 'archived'}`}
+                                >
+                                  {!m.active
+                                    ? 'Inativo'
+                                    : membershipIsActive(m)
+                                      ? 'Ativo'
+                                      : 'Expirado'}
                                 </span>
                               </td>
                               <td>

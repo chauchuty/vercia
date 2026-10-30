@@ -1,3 +1,4 @@
+import PasswordInput from './PasswordInput';
 import type { FormEvent, ReactNode } from 'react';
 import { ArrowUpRight, Bell, ShieldCheck } from 'lucide-react';
 import type { Database, Invite, User } from '../domain/models';
@@ -83,9 +84,9 @@ export default function AuthScreen({
                   )}
                   <label>
                     Senha
-                    <input
+                    <PasswordInput
                       name="password"
-                      type="password"
+
                       required
                       minLength={8}
                       autoComplete="current-password"
@@ -115,9 +116,9 @@ export default function AuthScreen({
               </label>
               <label>
                 Senha
-                <input
+                <PasswordInput
                   name="password"
-                  type="password"
+
                   required
                   autoComplete="current-password"
                   placeholder="Sua senha"

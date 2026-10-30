@@ -1,3 +1,4 @@
+import PasswordInput from '../PasswordInput';
 import type { DialogProps } from './types';
 import { Modal } from '../components';
 import { input } from '../helpers';
@@ -64,13 +65,13 @@ export default function AccountDialog({
             {errorBox}
             <label>
               Senha atual
-              <input name="current" type="password" required autoComplete="current-password" />
+              <PasswordInput name="current" required autoComplete="current-password" />
             </label>
             <label>
               Nova senha
-              <input
+              <PasswordInput
                 name="password"
-                type="password"
+
                 minLength={8}
                 required
                 autoComplete="new-password"
@@ -78,9 +79,9 @@ export default function AccountDialog({
             </label>
             <label>
               Repita a nova senha
-              <input
+              <PasswordInput
                 name="repeat"
-                type="password"
+
                 minLength={8}
                 required
                 autoComplete="new-password"

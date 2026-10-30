@@ -1,3 +1,4 @@
+import PasswordInput from '../PasswordInput';
 import type { DialogProps } from './types';
 import { Modal } from '../components';
 import { input } from '../helpers';
@@ -48,7 +49,7 @@ export default function MemberDialog({
                   run(() => {
                     manage();
                     const active = f.has('active');
-                    const role = input(f, 'role') as 'manager' | 'member';
+                    const role = m.role;
                     if (
                       m.role === 'manager' &&
                       m.active &&
@@ -60,7 +61,14 @@ export default function MemberDialog({
                       ...data,
                       memberships: data.memberships.map((x) =>
                         x.id === m.id
-                          ? { ...x, active, role, categoryIds: f.getAll('categories').map(String) }
+                          ? {
+                              ...x,
+                              active,
+                              role,
+                              categoryIds: f.getAll('categories').map(String),
+                              validUntil:
+                                role === 'member' ? input(f, 'validUntil') || undefined : undefined,
+                            }
                           : x,
                       ),
                     });
@@ -73,11 +81,15 @@ export default function MemberDialog({
                 <p className="muted">{u.email}</p>
                 <label>
                   Perfil
-                  <select name="role" defaultValue={m.role}>
-                    <option value="member">Usuário</option>
-                    <option value="manager">Gestor</option>
-                  </select>
+                  <input value={m.role === 'manager' ? 'Gestor' : 'Usuário'} disabled />
                 </label>
+                {m.role === 'member' && (
+                  <label>
+                    Validade do acesso (opcional)
+                    <input type="date" name="validUntil" defaultValue={m.validUntil || ''} />
+                    <small className="help">O acesso termina às 23:59 do dia selecionado.</small>
+                  </label>
+                )}
                 <fieldset>
                   <legend>Categorias</legend>
                   {categories
@@ -131,9 +143,9 @@ export default function MemberDialog({
               >
                 <label>
                   Nova senha
-                  <input
+                  <PasswordInput
                     name="password"
-                    type="password"
+
                     minLength={8}
                     required
                     autoComplete="new-password"

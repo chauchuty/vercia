@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, o administrador cria contas de gestor e acompanha as atividades registradas. Cada gestor entra com sua conta e cria suas instituições, informando nome, sigla de exatamente 4 letras ou números e cor de referência. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha inicial em Minha conta. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
+Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, o administrador cria contas de gestor e acompanha as atividades registradas. Cada gestor entra com sua conta e cria uma instituição, informando nome, sigla de exatamente 4 letras ou números e cor de referência; esses dados podem ser alterados posteriormente. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha inicial em Minha conta. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
 
 ```sh
 npm run build
@@ -18,10 +18,10 @@ npm test
 
 ## Fluxo de uso
 
-1. Entre com a conta Administrador e crie uma conta de gestor. Entre com essa conta para criar uma ou mais instituições.
-2. Crie categorias, se desejar, e gere convites pelo e-mail das pessoas.
+1. Entre com a conta Administrador e crie uma conta de gestor. Entre com essa conta para criar e configurar sua instituição.
+2. O gestor cria categorias e gera convites de usuário pelo e-mail das pessoas, escolhendo categorias e, opcionalmente, a data final de acesso. O acesso é válido até o fim do dia selecionado no horário local do navegador; a validade do link de convite é independente.
 3. Copie o link do convite e saia da conta gestora. Abra o link no **mesmo navegador e origem** para cadastrar o usuário ou entrar em uma conta existente. Não existe SMTP.
-4. Entre novamente como gestor, associe categorias na tela Pessoas e publique uma notificação para todos ou para categorias selecionadas.
+4. Entre novamente como gestor, ajuste categorias e validade na tela Pessoas se necessário e publique uma notificação para todos ou para categorias selecionadas.
 5. Entre como destinatário. A caixa mostra somente o título e o ícone de prioridade. Abra para registrar acesso e confirme ciência, se solicitado.
 6. Consulte as aberturas e confirmações na tela Notificações do gestor.
 
@@ -61,3 +61,5 @@ O GitHub Actions valida TypeScript, build, testes de regras e formatação a cad
 A versão 2 do armazenamento substitui a base local anterior uma única vez: remove a chave `vercia.database.v1`, encerra a sessão antiga e cria `vercia.database.v2` contendo apenas o Administrador. Os dados criados a partir desta versão são preservados nas próximas aberturas. Os testes de navegador usam dados isolados e não adicionam exemplos à aplicação.
 
 Instituições cadastradas antes da inclusão de sigla e cor são preservadas: recebem uma sigla derivada do nome e a cor verde padrão. Nenhuma base é reiniciada por esta feature.
+
+As preferências de tema claro ou escuro são salvas neste navegador. Administradores não participam de instituições; gestores já existentes com múltiplas instituições mantêm seus dados, mas não podem criar outras. Convites antigos de gestor não podem mais ser aceitos.

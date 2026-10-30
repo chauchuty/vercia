@@ -2,7 +2,7 @@ import type { DialogProps } from './types';
 import { Modal } from '../components';
 import { uid, input } from '../helpers';
 import { normalizeEmail } from '../../application/auth';
-import { validInvite } from '../../application/service';
+import { validInvite, membershipIsActive } from '../../application/service';
 import { Link } from 'lucide-react';
 export default function InvitationDialog({
   modal,
@@ -10,6 +10,7 @@ export default function InvitationDialog({
   data,
   inst,
   members,
+  categories,
   invites,
   errorBox,
   busy,
@@ -26,6 +27,7 @@ export default function InvitationDialog({
   | 'data'
   | 'inst'
   | 'members'
+  | 'categories'
   | 'invites'
   | 'errorBox'
   | 'busy'
@@ -47,7 +49,28 @@ export default function InvitationDialog({
               run(() => {
                 manage();
                 const email = normalizeEmail(input(f, 'email'));
+                const validUntil = input(f, 'validUntil');
+                if (
+                  validUntil &&
+                  !membershipIsActive({
+                    id: '',
+                    userId: '',
+                    institutionId: inst,
+                    role: 'member',
+                    active: true,
+                    categoryIds: [],
+                    validUntil,
+                  })
+                )
+                  throw Error('A validade do acesso não pode estar no passado.');
                 const u = data.users.find((u) => u.email === email);
+                if (
+                  u &&
+                  (u.isAdministrator ||
+                    u.isManager ||
+                    data.memberships.some((m) => m.userId === u.id && m.role === 'manager'))
+                )
+                  throw Error('Administradores e gestores não podem ser convidados como usuários.');
                 if (u && members.some((m) => m.userId === u.id && m.active))
                   throw Error('Esta pessoa já participa da instituição.');
                 if (invites.some((i) => i.email === email && validInvite(i)))
@@ -60,7 +83,9 @@ export default function InvitationDialog({
                       id: uid(),
                       institutionId: inst,
                       email,
-                      role: input(f, 'role') as 'member' | 'manager',
+                      role: 'member',
+                      categoryIds: f.getAll('categories').map(String),
+                      validUntil: validUntil || undefined,
                       expiresAt: new Date(
                         Date.now() + Number(input(f, 'days')) * 86400000,
                       ).toISOString(),
@@ -86,13 +111,10 @@ export default function InvitationDialog({
             <div className="form-grid">
               <label>
                 Perfil
-                <select name="role">
-                  <option value="member">Usuário</option>
-                  <option value="manager">Gestor</option>
-                </select>
+                <input value="Usuário" disabled />
               </label>
               <label>
-                Validade
+                Validade do convite
                 <select name="days">
                   <option value="7">7 dias</option>
                   <option value="1">1 dia</option>
@@ -100,6 +122,25 @@ export default function InvitationDialog({
                 </select>
               </label>
             </div>
+            <label>
+              Validade do acesso do usuário (opcional)
+              <input type="date" name="validUntil" />
+              <small className="help">O acesso termina às 23:59 do dia selecionado.</small>
+            </label>
+            <fieldset>
+              <legend>Categorias do usuário</legend>
+              {categories
+                .filter((c) => !c.archived)
+                .map((c) => (
+                  <label className="check-label" key={c.id}>
+                    <input type="checkbox" name="categories" value={c.id} />
+                    {c.name}
+                  </label>
+                ))}
+              {!categories.some((c) => !c.archived) && (
+                <small className="help">Crie categorias para associá-las aos usuários.</small>
+              )}
+            </fieldset>
             <button className="primary" disabled={busy}>
               <Link size={17} />
               Gerar convite

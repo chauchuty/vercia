@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { emptyDatabase, type Database, type Notice } from '../domain/models';
-import { publishNotice, recordReceipt, validInvite } from './service';
+import {
+  membershipIsActive,
+  publishNotice,
+  recordReceipt,
+  validInvite,
+  requireManager,
+} from './service';
 const draft: Notice = {
   id: 'n',
   institutionId: 'school',
@@ -111,5 +117,25 @@ describe('Validade de convites', () => {
     expect(validInvite({ ...invite, used: true })).toBe(false);
     expect(validInvite({ ...invite, revoked: true })).toBe(false);
     expect(validInvite({ ...invite, expiresAt: '2020-01-01' })).toBe(false);
+  });
+});
+describe('Validade do acesso', () => {
+  it('mantém o acesso até o final do dia local e bloqueia a partir do dia seguinte', () => {
+    const membership = { ...fixture().memberships[1], validUntil: '2026-10-30' };
+    expect(membershipIsActive(membership, new Date(2026, 9, 30, 23, 59, 59))).toBe(true);
+    expect(membershipIsActive(membership, new Date(2026, 9, 31, 0, 0, 0))).toBe(false);
+    expect(membershipIsActive({ ...membership, active: false }, new Date(2026, 9, 30))).toBe(false);
+  });
+  it('impede administrador com vínculo antigo de atuar como gestor', () => {
+    const db = fixture();
+    db.users.push({
+      id: 'manager',
+      name: 'Admin',
+      email: 'a@a.com',
+      hash: '',
+      salt: '',
+      isAdministrator: true,
+    });
+    expect(() => requireManager(db, 'manager', 'school')).toThrow('gestor');
   });
 });

@@ -1,3 +1,4 @@
+import PasswordInput from './PasswordInput';
 import type { FormEvent, ReactNode } from 'react';
 import type { Database, User } from '../domain/models';
 import { date } from './helpers';
@@ -46,9 +47,9 @@ export default function AdminScreen({
           </label>
           <label>
             Senha inicial
-            <input
+            <PasswordInput
               name="password"
-              type="password"
+
               minLength={8}
               required
               autoComplete="new-password"

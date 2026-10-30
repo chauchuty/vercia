@@ -28,6 +28,7 @@ export interface Membership {
   role: Role;
   active: boolean;
   categoryIds: string[];
+  validUntil?: string;
 }
 export interface Category {
   id: string;
@@ -43,6 +44,8 @@ export interface Invite {
   expiresAt: string;
   used: boolean;
   revoked: boolean;
+  categoryIds?: string[];
+  validUntil?: string;
 }
 export interface Receipt {
   userId: string;

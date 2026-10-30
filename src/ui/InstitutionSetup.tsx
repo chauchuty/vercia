@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { DEFAULT_INSTITUTION_COLOR, institutionTextColor } from '../domain/institution';
 import { Building2, LogOut } from 'lucide-react';
-import type { User } from '../domain/models';
+import type { User, Institution } from '../domain/models';
 interface Props {
   user: User;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -9,6 +9,7 @@ interface Props {
   errorBox: ReactNode;
   busy: boolean;
   onBack?: () => void;
+  institution?: Institution;
 }
 export default function InstitutionSetup({
   user,
@@ -17,21 +18,27 @@ export default function InstitutionSetup({
   errorBox,
   busy,
   onBack,
+  institution,
 }: Props) {
-  const [acronym, setAcronym] = useState('');
-  const [color, setColor] = useState(DEFAULT_INSTITUTION_COLOR);
+  const [acronym, setAcronym] = useState(institution?.acronym || '');
+  const [color, setColor] = useState(institution?.color || DEFAULT_INSTITUTION_COLOR);
   return (
     <main className="auth-main" style={{ minHeight: '100vh' }}>
       <section className="auth-form">
         <span className="eyebrow">VERCIA · GESTÃO</span>
         <h1>Olá, {user.name}</h1>
-        <p className="muted">Crie uma instituição para organizar sua comunidade escolar.</p>
+        <p className="muted">
+          {institution
+            ? 'Atualize os dados da sua instituição.'
+            : 'Crie uma instituição para organizar sua comunidade escolar.'}
+        </p>
         {errorBox}
         <form onSubmit={onSubmit}>
           <label>
             Nome da instituição
             <input
               name="institution"
+              defaultValue={institution?.name}
               required
               maxLength={120}
               placeholder="Informe o nome da sua instituição"
@@ -82,7 +89,7 @@ export default function InstitutionSetup({
           </div>
           <button className="primary" disabled={busy}>
             <Building2 size={17} />
-            Criar instituição
+            {institution ? 'Salvar instituição' : 'Criar instituição'}
           </button>
         </form>
         <p className="help" style={{ marginTop: 20 }}>
