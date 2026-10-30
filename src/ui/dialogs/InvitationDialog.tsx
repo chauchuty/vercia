@@ -87,7 +87,7 @@ export default function InvitationDialog({
                       categoryIds: f.getAll('categories').map(String),
                       validUntil: validUntil || undefined,
                       expiresAt: new Date(
-                        Date.now() + Number(input(f, 'days')) * 86400000,
+                        Date.now() + Number(input(f, 'minutes')) * 60000,
                       ).toISOString(),
                       used: false,
                       revoked: false,
@@ -108,20 +108,15 @@ export default function InvitationDialog({
               E-mail
               <input type="email" name="email" required placeholder="pessoa@exemplo.com" />
             </label>
-            <div className="form-grid">
-              <label>
-                Perfil
-                <input value="Usuário" disabled />
-              </label>
-              <label>
-                Validade do convite
-                <select name="days">
-                  <option value="7">7 dias</option>
-                  <option value="1">1 dia</option>
-                  <option value="30">30 dias</option>
-                </select>
-              </label>
-            </div>
+            <label>
+              Validade do convite
+              <select name="minutes">
+                <option value="5">5 minutos</option>
+                <option value="10">10 minutos</option>
+                <option value="15">15 minutos</option>
+                <option value="30">30 minutos</option>
+              </select>
+            </label>
             <label>
               Validade do acesso do usuário (opcional)
               <input type="date" name="validUntil" />
