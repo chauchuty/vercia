@@ -1660,3 +1660,118 @@ html[data-theme='dark'] .personal-notice-card:hover {
     line-height: 1.4;
   }
 }
+
+.admin-sidebar-title {
+  margin: 38px 12px 12px;
+}
+.admin-topbar-actions {
+  gap: 8px !important;
+}
+.admin-topbar-actions .icon-button {
+  width: 38px;
+  height: 38px;
+}
+.admin-content {
+  padding-bottom: max(30px, env(safe-area-inset-bottom));
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 720px;
+  margin-bottom: 24px;
+}
+.admin-manager-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  align-items: start;
+}
+.admin-panel {
+  max-width: 1000px;
+}
+.admin-panel-body {
+  padding: 20px 24px 24px;
+}
+.admin-form {
+  display: grid;
+  gap: 16px;
+}
+.admin-form label {
+  display: grid;
+  gap: 8px;
+}
+.admin-form .primary {
+  width: 100%;
+}
+.admin-empty {
+  padding: 22px 24px;
+  margin: 0;
+  color: #7a8880;
+}
+.admin-activity-list,
+.admin-manager-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 24px;
+}
+.admin-activity-list li,
+.admin-manager-list li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.admin-activity-list li:last-child,
+.admin-manager-list li:last-child {
+  border-bottom: 0;
+}
+.admin-activity-list li {
+  display: grid;
+  gap: 4px;
+}
+.admin-activity-list li span,
+.admin-activity-list li small,
+.admin-manager-list small {
+  color: #7a8880;
+}
+.admin-manager-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-manager-list li div {
+  min-width: 0;
+}
+.admin-manager-list strong,
+.admin-manager-list small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.admin-manager-list small {
+  margin-top: 4px;
+}
+@media (max-width: 620px) {
+  .admin-sidebar-title {
+    display: none;
+  }
+  .admin-manager-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .admin-stats {
+    gap: 10px;
+  }
+  .admin-stats .stat {
+    min-height: 120px;
+  }
+  .admin-panel-body {
+    padding: 16px 17px 20px;
+  }
+  .admin-activity-list,
+  .admin-manager-list {
+    padding: 0 17px;
+  }
+  .admin-empty {
+    padding: 18px 17px;
+  }
+}
