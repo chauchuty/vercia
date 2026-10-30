@@ -11,6 +11,7 @@ import NoticeEditor from './dialogs/NoticeEditor';
 import Dashboard from './Dashboard';
 import InstitutionSetup from './InstitutionSetup';
 import AuthScreen from './AuthScreen';
+import AdminScreen from './AdminScreen';
 import NoticeTable from './NoticeTable';
 import { Empty } from './components';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -48,6 +49,7 @@ export default function App() {
   const [db, setDb] = useState<Database | null>(initial.db);
   const [userId, setUserId] = useState(session.get);
   const [institutionId, setInstitutionId] = useState('');
+  const [creatingInstitution, setCreatingInstitution] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [error, setError] = useState(initial.error);
   const [toast, setToast] = useState('');
@@ -77,6 +79,38 @@ export default function App() {
     window.setTimeout(() => setToast(''), 4500);
   }
   function commit(next: Database) {
+    const actor = db?.users.find((u) => u.id === userId);
+    if (
+      db &&
+      actor &&
+      !actor.isAdministrator &&
+      (actor.isManager ||
+        db.memberships.some((m) => m.userId === actor.id && m.active && m.role === 'manager'))
+    ) {
+      const labels = {
+        institutions: 'instituições',
+        memberships: 'vínculos',
+        categories: 'categorias',
+        invites: 'convites',
+        notices: 'notificações',
+      } as const;
+      const changes = (Object.keys(labels) as (keyof typeof labels)[]).filter(
+        (key) => JSON.stringify(db[key]) !== JSON.stringify(next[key]),
+      );
+      if (changes.length)
+        next = {
+          ...next,
+          managerActivities: [
+            ...(db.managerActivities || []),
+            {
+              id: uid(),
+              userId: actor.id,
+              at: new Date().toISOString(),
+              description: `Atualizou ${changes.map((key) => labels[key]).join(', ')}.`,
+            },
+          ],
+        };
+    }
     saveDatabase(next);
     setDb(next);
   }
@@ -137,7 +171,12 @@ export default function App() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     await run(async () => {
-      if (!user?.isAdministrator) throw Error('Somente o Administrador pode criar instituições.');
+      if (
+        !user ||
+        user.isAdministrator ||
+        !(user.isManager || memberships.some((m) => m.role === 'manager'))
+      )
+        throw Error('Somente gestores podem criar instituições.');
       const name = input(f, 'institution');
       const id = uid();
       const newInstitution = createInstitution(id, name, input(f, 'acronym'), input(f, 'color'));
@@ -157,6 +196,7 @@ export default function App() {
         ],
       });
       setInstitutionId(id);
+      setCreatingInstitution(false);
     });
   }
   async function acceptInvite(e: FormEvent<HTMLFormElement>) {
@@ -235,7 +275,50 @@ export default function App() {
         }}
       />
     );
-  if (user.isAdministrator && !membership)
+  if (user.isAdministrator)
+    return (
+      <>
+        <AdminScreen
+          data={data}
+          user={user}
+          errorBox={errorBox}
+          busy={busy}
+          onAccount={() => openModal('account')}
+          onLogout={() => {
+            session.clear();
+            setUserId(null);
+          }}
+          onCreate={(e) => {
+            e.preventDefault();
+            const form = new FormData(e.currentTarget);
+            const element = e.currentTarget;
+            run(async () => {
+              const email = normalizeEmail(input(form, 'email'));
+              if (data.users.some((u) => u.email === email))
+                throw Error('Já existe uma conta com este e-mail.');
+              const created = await createUser(input(form, 'name'), email, input(form, 'password'));
+              if (!created.name) throw Error('Informe o nome do gestor.');
+              commit({ ...data, users: [...data.users, { ...created, isManager: true }] });
+              element.reset();
+            });
+          }}
+        />
+        <AccountDialog
+          modal={modal}
+          data={data}
+          user={user}
+          errorBox={errorBox}
+          busy={busy}
+          run={run}
+          commit={commit}
+          close={close}
+          notify={notify}
+          setUserId={setUserId}
+          setInstitutionId={setInstitutionId}
+        />
+      </>
+    );
+  if ((user.isManager && !membership) || creatingInstitution)
     return (
       <InstitutionSetup
         user={user}
@@ -246,6 +329,7 @@ export default function App() {
         }}
         errorBox={errorBox}
         busy={busy}
+        onBack={membership ? () => setCreatingInstitution(false) : undefined}
       />
     );
   const actor = user;
@@ -380,6 +464,11 @@ export default function App() {
               </option>
             ))}
           </select>
+        )}
+        {(user.isManager || memberships.some((m) => m.role === 'manager')) && (
+          <button className="settings-nav" onClick={() => setCreatingInstitution(true)}>
+            <Plus size={18} /> Criar instituição
+          </button>
         )}
         <span className="nav-label">PRINCIPAL</span>
         <nav>

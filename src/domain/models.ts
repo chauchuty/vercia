@@ -7,6 +7,13 @@ export interface User {
   hash: string;
   salt: string;
   isAdministrator?: boolean;
+  isManager?: boolean;
+}
+export interface ManagerActivity {
+  id: string;
+  userId: string;
+  at: string;
+  description: string;
 }
 export interface Institution {
   id: string;
@@ -65,6 +72,7 @@ export interface Database {
   categories: Category[];
   invites: Invite[];
   notices: Notice[];
+  managerActivities?: ManagerActivity[];
 }
 export const priorities: Record<Priority, string> = {
   low: 'Baixa',

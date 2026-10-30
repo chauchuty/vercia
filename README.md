@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, você pode criar a primeira instituição informando nome, sigla de exatamente 4 letras ou números e cor de referência. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha em Minha conta depois de criar a instituição. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
+Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, o administrador cria contas de gestor e acompanha as atividades registradas. Cada gestor entra com sua conta e cria suas instituições, informando nome, sigla de exatamente 4 letras ou números e cor de referência. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha inicial em Minha conta. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
 
 ```sh
 npm run build
@@ -18,12 +18,14 @@ npm test
 
 ## Fluxo de uso
 
-1. Entre com a conta Administrador e crie sua instituição, quando desejar.
+1. Entre com a conta Administrador e crie uma conta de gestor. Entre com essa conta para criar uma ou mais instituições.
 2. Crie categorias, se desejar, e gere convites pelo e-mail das pessoas.
 3. Copie o link do convite e saia da conta gestora. Abra o link no **mesmo navegador e origem** para cadastrar o usuário ou entrar em uma conta existente. Não existe SMTP.
 4. Entre novamente como gestor, associe categorias na tela Pessoas e publique uma notificação para todos ou para categorias selecionadas.
 5. Entre como destinatário. A caixa mostra somente o título e o ícone de prioridade. Abra para registrar acesso e confirme ciência, se solicitado.
 6. Consulte as aberturas e confirmações na tela Notificações do gestor.
+
+O painel do administrador registra alterações feitas por gestores em instituições, vínculos, categorias, convites e notificações a partir desta atualização. O histórico fica no mesmo armazenamento local e não recupera atividades anteriores.
 
 Os destinatários ficam fixos na publicação. Uma pessoa em várias categorias recebe apenas uma entrega. Rascunhos podem ser editados e excluídos; publicações podem ser arquivadas. Categorias e vínculos podem ser desativados. O último gestor ativo não pode ser removido. Uma conta pode aceitar convites de mais de uma instituição, com seleção de instituição na barra lateral.
 

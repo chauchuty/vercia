@@ -8,19 +8,24 @@ interface Props {
   onLogout: () => void;
   errorBox: ReactNode;
   busy: boolean;
+  onBack?: () => void;
 }
-export default function InstitutionSetup({ user, onSubmit, onLogout, errorBox, busy }: Props) {
+export default function InstitutionSetup({
+  user,
+  onSubmit,
+  onLogout,
+  errorBox,
+  busy,
+  onBack,
+}: Props) {
   const [acronym, setAcronym] = useState('');
   const [color, setColor] = useState(DEFAULT_INSTITUTION_COLOR);
   return (
     <main className="auth-main" style={{ minHeight: '100vh' }}>
       <section className="auth-form">
-        <span className="eyebrow">VERCIA · ADMINISTRAÇÃO</span>
+        <span className="eyebrow">VERCIA · GESTÃO</span>
         <h1>Olá, {user.name}</h1>
-        <p className="muted">
-          A base está vazia. Nenhuma instituição, categoria, pessoa convidada ou notificação foi
-          criada.
-        </p>
+        <p className="muted">Crie uma instituição para organizar sua comunidade escolar.</p>
         {errorBox}
         <form onSubmit={onSubmit}>
           <label>
@@ -81,9 +86,13 @@ export default function InstitutionSetup({ user, onSubmit, onLogout, errorBox, b
           </button>
         </form>
         <p className="help" style={{ marginTop: 20 }}>
-          A instituição será criada apenas quando você enviar este formulário. Depois, altere a
-          senha inicial em Minha conta.
+          A instituição será criada quando você enviar este formulário.
         </p>
+        {onBack && (
+          <button className="text-button" onClick={onBack}>
+            Voltar
+          </button>
+        )}
         <button className="text-button" onClick={onLogout}>
           <LogOut size={16} />
           Sair

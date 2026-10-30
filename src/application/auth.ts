@@ -1,6 +1,9 @@
 import type { User } from '../domain/models';
 export const normalizeEmail = (value: string) => value.trim().toLowerCase();
 export async function hashPassword(password: string, salt: string) {
+  if (!globalThis.crypto?.subtle) {
+    throw Error('Para entrar, abra o aplicativo por HTTPS ou acesse localhost neste computador.');
+  }
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(password),
@@ -17,6 +20,9 @@ export async function hashPassword(password: string, salt: string) {
 }
 export async function createUser(name: string, email: string, password: string): Promise<User> {
   if (password.length < 8) throw Error('Use uma senha de pelo menos 8 caracteres.');
+  if (!globalThis.crypto?.subtle || !globalThis.crypto?.randomUUID) {
+    throw Error('Para usar o aplicativo, abra-o por HTTPS ou acesse localhost neste computador.');
+  }
   const salt = crypto.randomUUID();
   return {
     id: crypto.randomUUID(),
