@@ -2644,3 +2644,48 @@ html[data-theme='dark'] .institution-picker-list button:hover {
 [hidden] {
   display: none !important;
 }
+
+/* Administração aproveita o espaço disponível sem alargar demais os formulários. */
+.admin-content {
+  max-width: 1600px;
+  width: 100%;
+}
+.admin-stats,
+.admin-panel,
+.admin-manager-grid,
+.report-list {
+  max-width: none;
+}
+.admin-manager-grid {
+  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+}
+.admin-manager-list li > div {
+  flex: 1;
+  min-width: 0;
+}
+.admin-edit-button {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+@media (min-width: 1500px) {
+  .admin-content {
+    padding-left: clamp(36px, 3vw, 64px);
+    padding-right: clamp(36px, 3vw, 64px);
+  }
+  .admin-manager-grid {
+    gap: 24px;
+  }
+}
+@media (max-width: 850px) {
+  .admin-manager-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 360px) {
+  .admin-manager-list li {
+    flex-wrap: wrap;
+  }
+  .admin-edit-button {
+    min-width: 70px;
+  }
+}

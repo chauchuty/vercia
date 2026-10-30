@@ -12,6 +12,9 @@ import PasswordInput from './PasswordInput';
 import AdminReports from './AdminReports';
 import type { Database, User } from '../domain/models';
 import { date } from './helpers';
+import { Modal } from './components';
+import { createUser, normalizeEmail } from '../application/auth';
+import { input } from './helpers';
 
 interface Props {
   data: Database;
@@ -21,6 +24,10 @@ interface Props {
   onAccount: () => void;
   errorBox: ReactNode;
   busy: boolean;
+  run: (action: () => void | Promise<void>) => Promise<void>;
+  commit: (data: Database) => void;
+  clearError: () => void;
+  notify: (message: string) => void;
 }
 export default function AdminScreen({
   data,
@@ -30,14 +37,20 @@ export default function AdminScreen({
   onAccount,
   errorBox,
   busy,
+  run,
+  commit,
+  clearError,
+  notify,
 }: Props) {
   const [page, setPage] = useState<'dashboard' | 'managers' | 'reports'>('dashboard');
+  const [editingId, setEditingId] = useState<string | null>(null);
   const managers = data.users.filter(
     (u) =>
       !u.isAdministrator &&
       (u.isManager || data.memberships.some((m) => m.userId === u.id && m.role === 'manager')),
   );
   const activities = [...(data.managerActivities || [])].reverse();
+  const editing = managers.find((manager) => manager.id === editingId);
   return (
     <div className="app-shell admin-shell">
       <aside className="sidebar">
@@ -222,6 +235,16 @@ export default function AdminScreen({
                             <strong>{manager.name}</strong>
                             <small>{manager.email}</small>
                           </div>
+                          <button
+                            className="secondary admin-edit-button"
+                            onClick={() => {
+                              clearError();
+                              setEditingId(manager.id);
+                            }}
+                            aria-label={`Editar ${manager.name}`}
+                          >
+                            Editar
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -234,6 +257,72 @@ export default function AdminScreen({
           )}
         </main>
       </div>
+      {editing && (
+        <Modal
+          title="Editar gestor"
+          onClose={() => {
+            setEditingId(null);
+            clearError();
+          }}
+        >
+          <p className="help">
+            Altere os dados da conta. A senha só será alterada se você informar uma nova.
+          </p>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const form = new FormData(event.currentTarget);
+              run(async () => {
+                if (!user.isAdministrator) throw Error('Acesso de administrador necessário.');
+                const name = input(form, 'name');
+                const email = normalizeEmail(input(form, 'email'));
+                const password = input(form, 'password');
+                if (!name) throw Error('Informe o nome do gestor.');
+                if (!email) throw Error('Informe o e-mail do gestor.');
+                if (
+                  data.users.some((u) => u.id !== editing.id && normalizeEmail(u.email) === email)
+                )
+                  throw Error('Já existe uma conta com este e-mail.');
+                const credentials = password ? await createUser(name, email, password) : null;
+                commit({
+                  ...data,
+                  users: data.users.map((u) =>
+                    u.id === editing.id
+                      ? {
+                          ...u,
+                          name,
+                          email,
+                          ...(credentials
+                            ? { hash: credentials.hash, salt: credentials.salt }
+                            : {}),
+                        }
+                      : u,
+                  ),
+                });
+                setEditingId(null);
+                notify('Dados do gestor atualizados.');
+              });
+            }}
+          >
+            {errorBox}
+            <label>
+              Nome
+              <input name="name" defaultValue={editing.name} required maxLength={120} />
+            </label>
+            <label>
+              E-mail
+              <input name="email" type="email" defaultValue={editing.email} required />
+            </label>
+            <label>
+              Nova senha (opcional)
+              <PasswordInput name="password" minLength={8} autoComplete="new-password" />
+            </label>
+            <button className="primary" disabled={busy}>
+              Salvar alterações
+            </button>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 }

@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, o administrador cria contas de gestor e acompanha as atividades registradas. Cada gestor pode cadastrar várias instituições, informando nome, sigla de exatamente 4 letras ou números, cor de referência e, opcionalmente, telefone, e-mail e endereço. Ao entrar, seleciona a instituição que deseja administrar; esses dados podem ser alterados posteriormente. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha inicial em Minha conta. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
+Abra o endereço exibido pelo Vite. A base inicia somente com o usuário Administrador, sem instituições, vínculos, categorias, convites ou notificações. Entre com `administrador@vercia.local` e senha inicial `Administrador123!`. Após o login, o administrador cria e edita contas de gestor, pode redefinir suas senhas e acompanha as atividades registradas. Cada gestor pode cadastrar várias instituições, informando nome, sigla de exatamente 4 letras ou números, cor de referência e, opcionalmente, telefone, e-mail e endereço. Ao entrar, seleciona a instituição que deseja administrar; esses dados podem ser alterados posteriormente. A sigla é convertida para maiúsculas e aparece com a cor escolhida na identificação da instituição. Altere a senha inicial em Minha conta. Requer navegador moderno e localhost ou HTTPS para a Web Crypto API.
 
 ```sh
 npm run build

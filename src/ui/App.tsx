@@ -337,6 +337,10 @@ export default function App() {
           user={user}
           errorBox={errorBox}
           busy={busy}
+          run={run}
+          commit={commit}
+          clearError={() => setError('')}
+          notify={notify}
           onAccount={() => openModal('account')}
           onLogout={() => {
             session.clear();
@@ -370,6 +374,12 @@ export default function App() {
           setUserId={setUserId}
           setInstitutionId={setInstitutionId}
         />
+        {toast && (
+          <div className="toast" role="status">
+            <Check size={18} />
+            {toast}
+          </div>
+        )}
       </>
     );
   const managerMemberships = memberships.filter((m) => m.role === 'manager');
