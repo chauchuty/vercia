@@ -2536,3 +2536,89 @@ html[data-theme='light'] .user-filters button.selected {
     padding-right: 72px;
   }
 }
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 14px 20px;
+  font-size: 12px;
+}
+.pagination button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.pagination button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.institution-picker .auth-form > .primary {
+  width: 100%;
+  margin-top: 20px;
+}
+.institution-picker-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: grid;
+  gap: 8px;
+}
+.institution-picker-list button {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+.institution-picker-list button strong {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.institution-picker-list button:hover {
+  background: #e8eee9;
+}
+html[data-theme='dark'] .institution-picker-list button:hover {
+  background: #26372d;
+}
+.institution-switch {
+  margin: -18px 0 18px;
+  padding-left: 2px;
+}
+.institution {
+  border: 0;
+  background: transparent;
+  padding-left: 0;
+  margin-bottom: 24px;
+}
+.institution strong {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.invite-details {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 24px;
+}
+.invite-details dt {
+  color: #7a8880;
+  font-size: 12px;
+}
+.invite-details dd {
+  margin: 3px 0 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 620px) {
+  .institution-switch {
+    margin: 6px 0 0;
+    min-height: 40px;
+  }
+  .pagination {
+    justify-content: center;
+    padding: 12px;
+  }
+}

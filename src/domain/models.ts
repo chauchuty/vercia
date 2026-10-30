@@ -20,6 +20,9 @@ export interface Institution {
   name: string;
   acronym: string;
   color: string;
+  phone?: string;
+  email?: string;
+  address?: string;
 }
 export interface Membership {
   id: string;

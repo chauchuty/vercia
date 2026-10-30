@@ -7,6 +7,7 @@ import { Link } from 'lucide-react';
 export default function InvitationDialog({
   modal,
   manager,
+  selected,
   data,
   inst,
   members,
@@ -24,6 +25,7 @@ export default function InvitationDialog({
   DialogProps,
   | 'modal'
   | 'manager'
+  | 'selected'
   | 'data'
   | 'inst'
   | 'members'
@@ -71,7 +73,7 @@ export default function InvitationDialog({
                     data.memberships.some((m) => m.userId === u.id && m.role === 'manager'))
                 )
                   throw Error('Administradores e gestores não podem ser convidados como usuários.');
-                if (u && members.some((m) => m.userId === u.id && m.active))
+                if (u && members.some((m) => m.userId === u.id && membershipIsActive(m)))
                   throw Error('Esta pessoa já participa da instituição.');
                 if (invites.some((i) => i.email === email && validInvite(i)))
                   throw Error('Já existe um convite pendente para este e-mail.');
@@ -106,7 +108,13 @@ export default function InvitationDialog({
             </p>
             <label>
               E-mail
-              <input type="email" name="email" required placeholder="pessoa@exemplo.com" />
+              <input
+                type="email"
+                name="email"
+                required
+                defaultValue={invites.find((i) => i.id === selected)?.email || ''}
+                placeholder="pessoa@exemplo.com"
+              />
             </label>
             <label>
               Validade do convite
@@ -119,7 +127,11 @@ export default function InvitationDialog({
             </label>
             <label>
               Validade do acesso do usuário (opcional)
-              <input type="date" name="validUntil" />
+              <input
+                type="date"
+                name="validUntil"
+                defaultValue={invites.find((i) => i.id === selected)?.validUntil || ''}
+              />
               <small className="help">O acesso termina às 23:59 do dia selecionado.</small>
             </label>
             <fieldset>
@@ -128,7 +140,14 @@ export default function InvitationDialog({
                 .filter((c) => !c.archived)
                 .map((c) => (
                   <label className="check-label" key={c.id}>
-                    <input type="checkbox" name="categories" value={c.id} />
+                    <input
+                      type="checkbox"
+                      name="categories"
+                      value={c.id}
+                      defaultChecked={invites
+                        .find((i) => i.id === selected)
+                        ?.categoryIds?.includes(c.id)}
+                    />
                     {c.name}
                   </label>
                 ))}

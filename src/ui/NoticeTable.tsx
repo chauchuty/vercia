@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import type { Notice } from '../domain/models';
 import { PriorityIcon, Empty } from './components';
+import { Pagination, usePagination } from './Pagination';
 const day = (s: string) =>
   new Date(s).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 export default function NoticeTable({
@@ -32,6 +33,7 @@ export default function NoticeTable({
             : n.status === filter)),
     )
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const pagination = usePagination(visible, `${search}:${filter}`);
   return (
     <>
       {!visible.length ? (
@@ -45,7 +47,7 @@ export default function NoticeTable({
         />
       ) : (
         <div className="notice-list">
-          {visible.map((n) => {
+          {pagination.items.map((n) => {
             const read = n.receipts.find((r) => r.userId === userId);
             return (
               <div className="notice-row" key={n.id}>
@@ -95,6 +97,7 @@ export default function NoticeTable({
           })}
         </div>
       )}
+      <Pagination {...pagination} />
     </>
   );
 }

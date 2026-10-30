@@ -76,6 +76,22 @@ export default function InstitutionSetup({
               <small className="help">{color.toUpperCase()}</small>
             </label>
           </div>
+          <label>
+            Telefone (opcional)
+            <input name="phone" type="tel" defaultValue={institution?.phone || ''} />
+          </label>
+          <label>
+            E-mail (opcional)
+            <input name="email" type="email" defaultValue={institution?.email || ''} />
+          </label>
+          <label>
+            Endereço (opcional)
+            <input
+              name="address"
+              autoComplete="street-address"
+              defaultValue={institution?.address || ''}
+            />
+          </label>
           <div className="institution-preview" aria-label="Prévia da identidade da instituição">
             <span
               className="institution-symbol"
@@ -93,7 +109,7 @@ export default function InstitutionSetup({
           </button>
         </form>
         <p className="help" style={{ marginTop: 20 }}>
-          A instituição será criada quando você enviar este formulário.
+          Os dados adicionais são opcionais e podem ser atualizados depois.
         </p>
         {onBack && (
           <button className="text-button" onClick={onBack}>

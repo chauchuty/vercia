@@ -2,19 +2,35 @@ import type { DialogProps } from './types';
 import { Modal, PriorityIcon } from '../components';
 import { date } from '../helpers';
 import { priorities } from '../../domain/models';
-import { Archive } from 'lucide-react';
+import { Archive, ArchiveRestore } from 'lucide-react';
+import { Pagination, usePagination } from '../Pagination';
 export default function NoticeReport({
   modal,
   manager,
   currentNotice,
   data,
   errorBox,
+  run,
+  manage,
+  commit,
+  notify,
   close,
   openModal,
 }: Pick<
   DialogProps,
-  'modal' | 'manager' | 'currentNotice' | 'data' | 'errorBox' | 'close' | 'openModal'
+  | 'modal'
+  | 'manager'
+  | 'currentNotice'
+  | 'data'
+  | 'errorBox'
+  | 'close'
+  | 'openModal'
+  | 'run'
+  | 'manage'
+  | 'commit'
+  | 'notify'
 >) {
+  const pagination = usePagination(currentNotice?.receipts || [], currentNotice?.id || '');
   return (
     <>
       {modal === 'report' && currentNotice && manager && (
@@ -37,7 +53,7 @@ export default function NoticeReport({
                 </tr>
               </thead>
               <tbody>
-                {currentNotice.receipts.map((r) => (
+                {pagination.items.map((r) => (
                   <tr key={r.userId}>
                     <td>{data.users.find((u) => u.id === r.userId)?.name}</td>
                     <td>{r.openedAt ? date(r.openedAt) : 'Não aberta'}</td>
@@ -53,6 +69,31 @@ export default function NoticeReport({
               </tbody>
             </table>
           </div>
+          <Pagination {...pagination} />
+          {currentNotice.status === 'archived' && (
+            <div className="modal-actions">
+              <button
+                className="secondary"
+                onClick={() =>
+                  run(() => {
+                    manage();
+                    commit({
+                      ...data,
+                      notices: data.notices.map((n) =>
+                        n.id === currentNotice.id && n.status === 'archived'
+                          ? { ...n, status: 'published' }
+                          : n,
+                      ),
+                    });
+                    close();
+                    notify('Notificação desarquivada.');
+                  })
+                }
+              >
+                <ArchiveRestore size={16} /> Desarquivar notificação
+              </button>
+            </div>
+          )}
           {currentNotice.status === 'published' && (
             <div className="modal-actions">
               <button className="secondary" onClick={() => openModal('archive', currentNotice.id)}>

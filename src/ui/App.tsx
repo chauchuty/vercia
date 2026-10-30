@@ -8,11 +8,14 @@ import ReadingDialog from './dialogs/ReadingDialog';
 import MemberDialog from './dialogs/MemberDialog';
 import CategoryDialog from './dialogs/CategoryDialog';
 import InvitationDialog from './dialogs/InvitationDialog';
+import InviteDetails from './dialogs/InviteDetails';
 import NoticeEditor from './dialogs/NoticeEditor';
 import Dashboard from './Dashboard';
 import InstitutionSetup from './InstitutionSetup';
+import InstitutionPicker from './InstitutionPicker';
 import AuthScreen from './AuthScreen';
 import UserWorkspace from './UserWorkspace';
+import { Pagination } from './Pagination';
 import AdminScreen from './AdminScreen';
 import NoticeTable from './NoticeTable';
 import { Empty } from './components';
@@ -58,6 +61,7 @@ export default function App() {
   const [userId, setUserId] = useState(session.get);
   const [institutionId, setInstitutionId] = useState('');
   const [creatingInstitution, setCreatingInstitution] = useState(false);
+  const [editingInstitution, setEditingInstitution] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [error, setError] = useState(initial.error);
   const [toast, setToast] = useState('');
@@ -66,6 +70,8 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [peoplePage, setPeoplePage] = useState(1);
+  const [invitePage, setInvitePage] = useState(1);
   const [inviteToken, setInviteToken] = useState(
     new URLSearchParams(location.search).get('invite') || '',
   );
@@ -82,6 +88,10 @@ export default function App() {
     window.addEventListener('storage', sync);
     return () => window.removeEventListener('storage', sync);
   }, []);
+  useEffect(() => {
+    setPeoplePage(1);
+    setInvitePage(1);
+  }, [institutionId]);
   function notify(message: string) {
     setToast(message);
     window.setTimeout(() => setToast(''), 4500);
@@ -163,6 +173,7 @@ export default function App() {
   function login(u: User) {
     session.set(u.id);
     setUserId(u.id);
+    setInstitutionId('');
     setPage('dashboard');
   }
   async function authenticate(e: FormEvent<HTMLFormElement>) {
@@ -185,11 +196,14 @@ export default function App() {
         !(user.isManager || memberships.some((m) => m.role === 'manager'))
       )
         throw Error('Somente gestores podem criar instituições.');
-      if (data.memberships.some((m) => m.userId === user.id && m.role === 'manager'))
-        throw Error('O gestor já possui uma instituição.');
       const name = input(f, 'institution');
       const id = uid();
-      const newInstitution = createInstitution(id, name, input(f, 'acronym'), input(f, 'color'));
+      const newInstitution = {
+        ...createInstitution(id, name, input(f, 'acronym'), input(f, 'color')),
+        phone: input(f, 'phone'),
+        email: input(f, 'email'),
+        address: input(f, 'address'),
+      };
       commit({
         ...data,
         institutions: [...data.institutions, newInstitution],
@@ -205,7 +219,7 @@ export default function App() {
           },
         ],
       });
-      setInstitutionId(id);
+      setInstitutionId('');
       setCreatingInstitution(false);
     });
   }
@@ -254,7 +268,7 @@ export default function App() {
       const prior = data.memberships.find(
         (m) => m.userId === u!.id && m.institutionId === invite.institutionId,
       );
-      if (prior?.active) throw Error('Você já participa desta instituição.');
+      if (prior && membershipIsActive(prior)) throw Error('Você já participa desta instituição.');
       commit({
         ...data,
         users,
@@ -358,23 +372,52 @@ export default function App() {
         />
       </>
     );
-  if ((user.isManager && !membership) || creatingInstitution)
+  const managerMemberships = memberships.filter((m) => m.role === 'manager');
+  const canManageInstitutions = !!user.isManager || managerMemberships.length > 0;
+  if (canManageInstitutions && !institutionId && !creatingInstitution)
+    return (
+      <InstitutionPicker
+        user={user}
+        institutions={data.institutions.filter((i) =>
+          managerMemberships.some((m) => m.institutionId === i.id),
+        )}
+        onSelect={(id) => {
+          setInstitutionId(id);
+          setPage('dashboard');
+        }}
+        onCreate={() => {
+          setEditingInstitution(false);
+          setCreatingInstitution(true);
+        }}
+        onLogout={() => {
+          session.clear();
+          setUserId(null);
+        }}
+      />
+    );
+  if (canManageInstitutions && creatingInstitution)
     return (
       <InstitutionSetup
         user={user}
         onSubmit={
-          creatingInstitution && institution
+          editingInstitution && institution
             ? (e) => {
                 e.preventDefault();
                 const form = new FormData(e.currentTarget);
                 run(() => {
                   manage();
-                  const updated = createInstitution(
-                    institution.id,
-                    input(form, 'institution'),
-                    input(form, 'acronym'),
-                    input(form, 'color'),
-                  );
+                  const updated = {
+                    ...institution,
+                    ...createInstitution(
+                      institution.id,
+                      input(form, 'institution'),
+                      input(form, 'acronym'),
+                      input(form, 'color'),
+                    ),
+                    phone: input(form, 'phone'),
+                    email: input(form, 'email'),
+                    address: input(form, 'address'),
+                  };
                   commit({
                     ...data,
                     institutions: data.institutions.map((item) =>
@@ -387,14 +430,14 @@ export default function App() {
               }
             : setup
         }
-        institution={creatingInstitution ? institution : undefined}
+        institution={editingInstitution ? institution : undefined}
         onLogout={() => {
           session.clear();
           setUserId(null);
         }}
         errorBox={errorBox}
         busy={busy}
-        onBack={membership ? () => setCreatingInstitution(false) : undefined}
+        onBack={() => setCreatingInstitution(false)}
       />
     );
   const actor = user;
@@ -406,6 +449,10 @@ export default function App() {
   const people = members.filter((m) => m.userId !== user.id);
   const categories = data.categories.filter((c) => c.institutionId === inst);
   const invites = data.invites.filter((i) => i.institutionId === inst);
+  const peoplePages = Math.max(1, Math.ceil(people.length / 10));
+  const currentPeoplePage = Math.min(peoplePage, peoplePages);
+  const invitePages = Math.max(1, Math.ceil(invites.length / 10));
+  const currentInvitePage = Math.min(invitePage, invitePages);
   const published = notices.filter((n) => n.status === 'published');
   const mine = published.filter((n) => n.receipts.some((r) => r.userId === user.id));
   const unread = mine.filter((n) => !n.receipts.find((r) => r.userId === user.id)?.openedAt);
@@ -548,29 +595,24 @@ export default function App() {
               className="institution-settings"
               aria-label="Configurar instituição"
               title="Configurar instituição"
-              onClick={() => setCreatingInstitution(true)}
+              onClick={() => {
+                setEditingInstitution(true);
+                setCreatingInstitution(true);
+              }}
             >
               <Settings size={16} />
             </button>
           )}
         </div>
-        {memberships.length > 1 && (
-          <select
-            className="institution-select"
-            aria-label="Instituição"
-            value={inst}
-            onChange={(e) => {
-              setInstitutionId(e.target.value);
-              setPage('dashboard');
-            }}
-          >
-            {memberships.map((m) => (
-              <option key={m.id} value={m.institutionId}>
-                {data.institutions.find((i) => i.id === m.institutionId)?.name}
-              </option>
-            ))}
-          </select>
-        )}
+        <button
+          className="institution-switch text-button"
+          onClick={() => {
+            setInstitutionId('');
+            setPage('dashboard');
+          }}
+        >
+          Trocar instituição
+        </button>
         <span className="nav-label">PRINCIPAL</span>
         <nav aria-label="Navegação principal">
           {nav.map((item) => (
@@ -593,10 +635,6 @@ export default function App() {
         </nav>
         <small className="mobile-scroll-hint">Deslize o menu para ver mais opções</small>
         <div className="sidebar-bottom">
-          <button className="settings-nav" onClick={() => openModal('account')}>
-            <Settings size={18} />
-            Minha conta
-          </button>
           <div className="profile">
             <span className="avatar">{user.name.slice(0, 2).toUpperCase()}</span>
             <div>
@@ -661,7 +699,7 @@ export default function App() {
                   <span className="eyebrow">{manager ? 'ESPAÇO DO GESTOR' : 'SUA COMUNIDADE'}</span>
                   <h1>
                     {page === 'dashboard'
-                      ? `Olá, ${user.name.split(' ')[0]} 👋`
+                      ? `Olá, ${user.name.split(' ')[0]}`
                       : nav.find((n) => n.id === page)?.label}
                   </h1>
                   <p>
@@ -790,51 +828,60 @@ export default function App() {
                         </tr>
                       </thead>
                       <tbody>
-                        {people.map((m) => {
-                          const u = data.users.find((u) => u.id === m.userId)!;
-                          return (
-                            <tr key={m.id}>
-                              <td>
-                                <div className="person-cell">
-                                  <span className="avatar">{u.name.slice(0, 2).toUpperCase()}</span>
-                                  <div>
-                                    <strong>{u.name}</strong>
-                                    <small>{u.email}</small>
+                        {people
+                          .slice((currentPeoplePage - 1) * 10, currentPeoplePage * 10)
+                          .map((m) => {
+                            const u = data.users.find((u) => u.id === m.userId)!;
+                            return (
+                              <tr key={m.id}>
+                                <td>
+                                  <div className="person-cell">
+                                    <span className="avatar">
+                                      {u.name.slice(0, 2).toUpperCase()}
+                                    </span>
+                                    <div>
+                                      <strong>{u.name}</strong>
+                                      <small>{u.email}</small>
+                                    </div>
                                   </div>
-                                </div>
-                              </td>
-                              <td>
-                                {m.categoryIds
-                                  .map((id) => categories.find((c) => c.id === id)?.name)
-                                  .filter(Boolean)
-                                  .join(', ') || 'Sem categoria'}
-                              </td>
-                              <td>{m.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
-                              <td>
-                                <span
-                                  className={`badge ${membershipIsActive(m) ? 'published' : 'archived'}`}
-                                >
-                                  {!m.active
-                                    ? 'Inativo'
-                                    : membershipIsActive(m)
-                                      ? 'Ativo'
-                                      : 'Expirado'}
-                                </span>
-                              </td>
-                              <td>
-                                <button
-                                  className="text-button"
-                                  onClick={() => openModal('member', m.id)}
-                                >
-                                  Gerenciar
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                                </td>
+                                <td>
+                                  {m.categoryIds
+                                    .map((id) => categories.find((c) => c.id === id)?.name)
+                                    .filter(Boolean)
+                                    .join(', ') || 'Sem categoria'}
+                                </td>
+                                <td>{m.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
+                                <td>
+                                  <span
+                                    className={`badge ${membershipIsActive(m) ? 'published' : 'archived'}`}
+                                  >
+                                    {!m.active
+                                      ? 'Inativo'
+                                      : membershipIsActive(m)
+                                        ? 'Ativo'
+                                        : 'Expirado'}
+                                  </span>
+                                </td>
+                                <td>
+                                  <button
+                                    className="text-button"
+                                    onClick={() => openModal('member', m.id)}
+                                  >
+                                    Gerenciar
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
                       </tbody>
                     </table>
                   </div>
+                  <Pagination
+                    page={currentPeoplePage}
+                    pages={peoplePages}
+                    setPage={setPeoplePage}
+                  />
                 </section>
               )}
               {page === 'categories' && manager && (
@@ -911,65 +958,80 @@ export default function App() {
                             </tr>
                           </thead>
                           <tbody>
-                            {invites.map((i) => (
-                              <tr key={i.id}>
-                                <td>{i.email}</td>
-                                <td>{i.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
-                                <td>{date(i.expiresAt)}</td>
-                                <td>
-                                  <span className="badge">
-                                    {i.used
-                                      ? 'Aceito'
-                                      : i.revoked
-                                        ? 'Revogado'
-                                        : validInvite(i)
-                                          ? 'Pendente'
-                                          : 'Expirado'}
-                                  </span>
-                                </td>
-                                <td>
-                                  {validInvite(i) && (
+                            {invites
+                              .slice((currentInvitePage - 1) * 10, currentInvitePage * 10)
+                              .map((i) => (
+                                <tr key={i.id}>
+                                  <td>{i.email}</td>
+                                  <td>{i.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
+                                  <td>{date(i.expiresAt)}</td>
+                                  <td>
+                                    <span className="badge">
+                                      {i.used
+                                        ? 'Aceito'
+                                        : i.revoked
+                                          ? 'Revogado'
+                                          : validInvite(i)
+                                            ? 'Pendente'
+                                            : 'Expirado'}
+                                    </span>
+                                  </td>
+                                  <td>
                                     <div className="inline-actions">
                                       <button
                                         className="text-button"
-                                        onClick={() =>
-                                          run(async () => {
-                                            await navigator.clipboard.writeText(
-                                              `${location.origin}${location.pathname}?invite=${i.id}`,
-                                            );
-                                            notify(
-                                              'Link copiado. Compartilhe com a pessoa convidada.',
-                                            );
-                                          })
-                                        }
+                                        onClick={() => openModal('invite-details', i.id)}
                                       >
-                                        <Copy size={15} />
-                                        Copiar link
+                                        Detalhes
                                       </button>
-                                      <button
-                                        className="text-button danger"
-                                        onClick={() =>
-                                          run(() => {
-                                            manage();
-                                            commit({
-                                              ...data,
-                                              invites: data.invites.map((x) =>
-                                                x.id === i.id ? { ...x, revoked: true } : x,
-                                              ),
-                                            });
-                                          })
-                                        }
-                                      >
-                                        Revogar
-                                      </button>
+                                      {validInvite(i) && (
+                                        <>
+                                          <button
+                                            className="text-button"
+                                            onClick={() =>
+                                              run(async () => {
+                                                await navigator.clipboard.writeText(
+                                                  `${location.origin}${location.pathname}?invite=${i.id}`,
+                                                );
+                                                notify(
+                                                  'Link copiado. Compartilhe com a pessoa convidada.',
+                                                );
+                                              })
+                                            }
+                                          >
+                                            <Copy size={15} />
+                                            Copiar link
+                                          </button>
+                                          <button
+                                            className="text-button danger"
+                                            onClick={() =>
+                                              run(() => {
+                                                manage();
+                                                commit({
+                                                  ...data,
+                                                  invites: data.invites.map((x) =>
+                                                    x.id === i.id ? { ...x, revoked: true } : x,
+                                                  ),
+                                                });
+                                              })
+                                            }
+                                          >
+                                            Revogar
+                                          </button>
+                                        </>
+                                      )}
                                     </div>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
+                                  </td>
+                                </tr>
+                              ))}
                           </tbody>
                         </table>
                       </div>
+                      <Pagination
+                        page={currentInvitePage}
+                        pages={invitePages}
+                        setPage={setInvitePage}
+                      />
                     </>
                   )}
                 </section>
@@ -984,6 +1046,7 @@ export default function App() {
       </div>
       <NoticeEditor {...dialogProps} />
       <InvitationDialog {...dialogProps} />
+      <InviteDetails {...dialogProps} />
       <CategoryDialog {...dialogProps} />
       <MemberDialog {...dialogProps} />
       <ReadingDialog {...dialogProps} />

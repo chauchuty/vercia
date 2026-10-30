@@ -74,9 +74,6 @@ export default function AdminScreen({
           </button>
         </nav>
         <div className="sidebar-bottom">
-          <button className="settings-nav" onClick={onAccount}>
-            <Settings size={18} /> Minha conta
-          </button>
           <div className="profile">
             <span className="avatar">{user.name.slice(0, 2).toUpperCase()}</span>
             <div>
