@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 export default function ThemeToggle() {
-  const [dark, setDark] = useState(() => localStorage.getItem('vercia.theme') === 'dark');
+  const [dark, setDark] = useState(() => localStorage.getItem('vercia.theme') !== 'light');
   useEffect(() => {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     localStorage.setItem('vercia.theme', dark ? 'dark' : 'light');

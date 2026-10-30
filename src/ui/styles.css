@@ -2232,3 +2232,151 @@ body:has(.overlay) .theme-toggle {
     min-height: 44px;
   }
 }
+
+.report-filter {
+  display: grid;
+  gap: 8px;
+  max-width: 420px;
+  margin-bottom: 20px;
+}
+.report-list {
+  display: grid;
+  gap: 14px;
+  max-width: 1000px;
+}
+.report-card {
+  padding: 22px;
+}
+.report-person {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.report-person h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.report-person p {
+  margin: 2px 0 0;
+  color: #7a8880;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.report-institutions {
+  display: grid;
+  gap: 4px;
+  margin-top: 20px;
+  font-size: 13px;
+}
+.report-institutions span {
+  color: #728179;
+}
+.report-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+.report-metrics div {
+  background: #edf1ed;
+  border-radius: 8px;
+  padding: 12px;
+}
+.report-metrics dt {
+  color: #607368;
+  font-size: 11px;
+}
+.report-metrics dd {
+  margin: 6px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+.report-activities {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.report-activities summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.report-activities summary span {
+  color: #7a8880;
+  font-weight: 400;
+}
+.report-activities ul {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.report-activities li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.report-activities small,
+.report-activities p {
+  color: #7a8880;
+}
+.report-note {
+  margin: 18px 0;
+}
+html[data-theme='dark'] .report-metrics div {
+  background: #26372d;
+}
+html[data-theme='dark'] .report-metrics dt,
+html[data-theme='dark'] .report-institutions span {
+  color: #b4c5b8;
+}
+html[data-theme='light'] {
+  color-scheme: light;
+  background: #e8ede9;
+  --line: #d2dcd4;
+}
+html[data-theme='light'] .workspace,
+html[data-theme='light'] .auth-main,
+html[data-theme='light'] .user-workspace {
+  background: #e8ede9;
+}
+html[data-theme='light'] .sidebar,
+html[data-theme='light'] .topbar,
+html[data-theme='light'] .user-header,
+html[data-theme='light'] .panel,
+html[data-theme='light'] .stat,
+html[data-theme='light'] .modal,
+html[data-theme='light'] .personal-notice-card,
+html[data-theme='light'] .institution-preview,
+html[data-theme='light'] .theme-toggle,
+html[data-theme='light'] .secondary {
+  background: #f2f5f1;
+}
+html[data-theme='light'] input,
+html[data-theme='light'] select,
+html[data-theme='light'] textarea,
+html[data-theme='light'] .user-filters button {
+  background: #f7f9f6;
+}
+html[data-theme='light'] .user-filters button.selected {
+  background: #216d52;
+  color: #fff;
+}
+@media (max-width: 620px) {
+  .report-card {
+    padding: 18px 16px;
+  }
+  .report-metrics {
+    gap: 7px;
+  }
+  .report-metrics div {
+    padding: 10px 8px;
+  }
+  .report-metrics dt {
+    font-size: 10px;
+  }
+  .report-activities li {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

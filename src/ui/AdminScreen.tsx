@@ -1,6 +1,15 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { Bell, Building2, LayoutDashboard, LogOut, Settings, Users } from 'lucide-react';
+import {
+  Bell,
+  Building2,
+  ChartNoAxesCombined,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+} from 'lucide-react';
 import PasswordInput from './PasswordInput';
+import AdminReports from './AdminReports';
 import type { Database, User } from '../domain/models';
 import { date } from './helpers';
 
@@ -22,7 +31,7 @@ export default function AdminScreen({
   errorBox,
   busy,
 }: Props) {
-  const [page, setPage] = useState<'dashboard' | 'managers'>('dashboard');
+  const [page, setPage] = useState<'dashboard' | 'managers' | 'reports'>('dashboard');
   const managers = data.users.filter(
     (u) =>
       !u.isAdministrator &&
@@ -56,6 +65,13 @@ export default function AdminScreen({
           >
             <Users size={19} /> Gestores
           </button>
+          <button
+            className={page === 'reports' ? 'active' : ''}
+            aria-current={page === 'reports' ? 'page' : undefined}
+            onClick={() => setPage('reports')}
+          >
+            <ChartNoAxesCombined size={19} /> Relatórios
+          </button>
         </nav>
         <div className="sidebar-bottom">
           <button className="settings-nav" onClick={onAccount}>
@@ -76,7 +92,10 @@ export default function AdminScreen({
       <div className="workspace">
         <header className="topbar admin-topbar">
           <span>
-            Administração <strong>{page === 'dashboard' ? 'Dashboard' : 'Gestores'}</strong>
+            Administração{' '}
+            <strong>
+              {page === 'dashboard' ? 'Dashboard' : page === 'managers' ? 'Gestores' : 'Relatórios'}
+            </strong>
           </span>
           <div className="admin-topbar-actions">
             <button className="icon-button" aria-label="Minha conta" onClick={onAccount}>
@@ -143,6 +162,8 @@ export default function AdminScreen({
                 )}
               </section>
             </>
+          ) : page === 'reports' ? (
+            <AdminReports data={data} managers={managers} />
           ) : (
             <>
               <div className="page-heading">

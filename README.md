@@ -25,7 +25,7 @@ npm test
 5. Entre como destinatário. A caixa mostra somente o título e o ícone de prioridade. Abra para registrar acesso e confirme ciência, se solicitado.
 6. Consulte as aberturas e confirmações na tela Notificações do gestor.
 
-O painel do administrador registra alterações feitas por gestores em instituições, vínculos, categorias, convites e notificações a partir desta atualização. O histórico fica no mesmo armazenamento local e não recupera atividades anteriores.
+A aba Relatórios do administrador mostra os gestores, suas instituições, contagens por instituição e atividades registradas neste navegador. O painel do administrador registra alterações feitas por gestores em instituições, vínculos, categorias, convites e notificações a partir desta atualização. O histórico fica no mesmo armazenamento local e não recupera atividades anteriores.
 
 Os destinatários ficam fixos na publicação. Uma pessoa em várias categorias recebe apenas uma entrega. Rascunhos podem ser editados e excluídos; publicações podem ser arquivadas. Categorias e vínculos podem ser desativados. O último gestor ativo não pode ser removido. Uma conta pode aceitar convites de mais de uma instituição, com seleção de instituição na barra lateral.
 
@@ -64,4 +64,4 @@ A versão 2 do armazenamento substitui a base local anterior uma única vez: rem
 
 Instituições cadastradas antes da inclusão de sigla e cor são preservadas: recebem uma sigla derivada do nome e a cor verde padrão. Nenhuma base é reiniciada por esta feature.
 
-As preferências de tema claro ou escuro são salvas neste navegador. Administradores não participam de instituições; gestores já existentes com múltiplas instituições mantêm seus dados, mas não podem criar outras. Convites antigos de gestor não podem mais ser aceitos.
+O tema escuro é o padrão; as preferências de tema claro ou escuro são salvas neste navegador. Administradores não participam de instituições; gestores já existentes com múltiplas instituições mantêm seus dados, mas não podem criar outras. Convites antigos de gestor não podem mais ser aceitos.
