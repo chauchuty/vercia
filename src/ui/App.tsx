@@ -515,6 +515,16 @@ export default function App() {
             <strong>{institution?.name || 'Sem instituição'}</strong>
             <small>{manager ? 'Espaço de gestão' : 'Comunidade escolar'}</small>
           </div>
+          {manager && (
+            <button
+              className="institution-settings"
+              aria-label="Configurar instituição"
+              title="Configurar instituição"
+              onClick={() => setCreatingInstitution(true)}
+            >
+              <Settings size={16} />
+            </button>
+          )}
         </div>
         {memberships.length > 1 && (
           <select
@@ -532,11 +542,6 @@ export default function App() {
               </option>
             ))}
           </select>
-        )}
-        {manager && (
-          <button className="settings-nav" onClick={() => setCreatingInstitution(true)}>
-            <Settings size={18} /> Configurar instituição
-          </button>
         )}
         <span className="nav-label">PRINCIPAL</span>
         <nav>

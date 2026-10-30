@@ -1818,3 +1818,52 @@ html[data-theme='dark'] .category-icon-option input:checked + span {
   background: #315343;
   color: #d9f5e2;
 }
+
+.institution {
+  position: relative;
+  padding-right: 36px;
+}
+.institution-settings {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: #789085;
+}
+.institution-settings:hover {
+  background: #edf4ee;
+  color: #1c7055;
+}
+html[data-theme='dark'] .institution-settings:hover {
+  background: #315343;
+  color: #d9f5e2;
+}
+@media (max-width: 620px) {
+  .sidebar .institution {
+    display: flex;
+    position: relative;
+    inset: auto;
+    margin: 15px 0 0;
+    padding: 10px 44px 10px 10px;
+    border: 1px solid var(--line);
+  }
+  .sidebar .institution .institution-symbol {
+    display: grid;
+  }
+  .sidebar .institution small {
+    display: block;
+  }
+  .sidebar .institution strong {
+    font-size: 12px;
+    max-width: none;
+  }
+  .institution-settings {
+    width: 40px;
+    height: 40px;
+  }
+  .sidebar nav {
+    margin-top: 12px;
+  }
+}
