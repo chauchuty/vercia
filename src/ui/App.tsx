@@ -12,6 +12,7 @@ import NoticeEditor from './dialogs/NoticeEditor';
 import Dashboard from './Dashboard';
 import InstitutionSetup from './InstitutionSetup';
 import AuthScreen from './AuthScreen';
+import UserWorkspace from './UserWorkspace';
 import AdminScreen from './AdminScreen';
 import NoticeTable from './NoticeTable';
 import { Empty } from './components';
@@ -487,6 +488,33 @@ export default function App() {
     setUserId,
     setInstitutionId,
   };
+  if (!manager)
+    return (
+      <>
+        <UserWorkspace
+          user={user}
+          data={data}
+          institution={institution}
+          memberships={memberships}
+          notices={notices}
+          onInstitutionChange={(id) => {
+            setInstitutionId(id);
+            setPage('dashboard');
+          }}
+          onOpen={openNotice}
+          onAccount={() => openModal('account')}
+        />
+        {error && !modal && <div className="user-error">{errorBox}</div>}
+        <ReadingDialog {...dialogProps} />
+        <AccountDialog {...dialogProps} />
+        {toast && (
+          <div className="toast" role="status">
+            <Check size={18} />
+            {toast}
+          </div>
+        )}
+      </>
+    );
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -676,11 +704,8 @@ export default function App() {
               {page === 'dashboard' && (
                 <Dashboard
                   user={user}
-                  manager={manager}
                   notices={notices}
                   members={members}
-                  onCompose={() => openModal('compose')}
-                  onInvite={() => openModal('invite')}
                   onNavigate={(page) => {
                     setPage(page);
                     setFilter('all');
@@ -688,7 +713,6 @@ export default function App() {
                   }}
                   onOpen={openNotice}
                   onManage={openModal}
-                  onAccount={() => openModal('account')}
                 />
               )}
               {(page === 'notices' || page === 'inbox') && (

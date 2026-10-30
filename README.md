@@ -29,6 +29,8 @@ O painel do administrador registra alterações feitas por gestores em institui�
 
 Os destinatários ficam fixos na publicação. Uma pessoa em várias categorias recebe apenas uma entrega. Rascunhos podem ser editados e excluídos; publicações podem ser arquivadas. Categorias e vínculos podem ser desativados. O último gestor ativo não pode ser removido. Uma conta pode aceitar convites de mais de uma instituição, com seleção de instituição na barra lateral.
 
+A área do usuário é adaptada para celular: reúne as notificações em cartões, com filtros para mensagens não lidas e confirmações pendentes, acesso à conta e troca de instituição quando necessário.
+
 ## Organização
 
 - `src/domain`: modelos e vocabulário do negócio.

@@ -1,145 +1,74 @@
-import { Send, Users, Eye, Clock, Bell, Mail, ArrowUpRight, ChevronRight } from 'lucide-react';
+import { Send, Users, Eye, Clock, ArrowUpRight } from 'lucide-react';
 import type { Notice, Membership, User } from '../domain/models';
+import { membershipIsActive } from '../application/service';
 import NoticeTable from './NoticeTable';
-import { Empty, PriorityIcon } from './components';
+
 interface Props {
   user: User;
-  manager: boolean;
   notices: Notice[];
   members: Membership[];
-  onCompose: () => void;
-  onInvite: () => void;
   onNavigate: (page: string) => void;
   onOpen: (notice: Notice) => void;
   onManage: (kind: string, id: string) => void;
-  onAccount: () => void;
 }
-export default function Dashboard({
-  user,
-  manager,
-  notices,
-  members,
-  onNavigate,
-  onOpen,
-  onManage,
-}: Props) {
-  const published = notices.filter((n) => n.status === 'published');
-  const mine = published.filter((n) => n.receipts.some((r) => r.userId === user.id));
-  const unread = mine.filter((n) => !n.receipts.find((r) => r.userId === user.id)?.openedAt);
-  const pending = mine.filter(
-    (n) => n.requiresConfirmation && !n.receipts.find((r) => r.userId === user.id)?.confirmedAt,
-  );
-  const receiptTotal = published.reduce((a, n) => a + n.receipts.length, 0);
+export default function Dashboard({ user, notices, members, onNavigate, onOpen, onManage }: Props) {
+  const published = notices.filter((notice) => notice.status === 'published');
+  const receiptTotal = published.reduce((total, notice) => total + notice.receipts.length, 0);
   const openedTotal = published.reduce(
-    (a, n) => a + n.receipts.filter((r) => r.openedAt).length,
+    (total, notice) => total + notice.receipts.filter((receipt) => receipt.openedAt).length,
     0,
   );
-  const percent = receiptTotal ? Math.round((openedTotal / receiptTotal) * 100) : 0;
-  if (!manager) {
-    const ordered = [...mine].sort((a, b) =>
-      (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt),
-    );
-    return (
-      <section className="personal-dashboard" aria-labelledby="personal-notices-title">
-        <div className="personal-dashboard-heading">
-          <h2 id="personal-notices-title">Suas notificações</h2>
-          <span>{ordered.length}</span>
-        </div>
-        {ordered.length ? (
-          <ul className="personal-notice-list">
-            {ordered.map((notice) => (
-              <li key={notice.id}>
-                <button className="personal-notice-card" onClick={() => onOpen(notice)}>
-                  <PriorityIcon value={notice.priority} />
-                  <strong>{notice.title}</strong>
-                  <ChevronRight size={20} aria-hidden="true" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="panel">
-            <Empty
-              title="Nenhuma notificação por enquanto"
-              description="Quando houver uma mensagem para você, ela aparecerá aqui."
-            />
-          </div>
-        )}
-      </section>
-    );
-  }
+  const stats = [
+    {
+      label: 'Notificações publicadas',
+      value: published.length,
+      icon: Send,
+      foot: 'Mensagens em circulação',
+      tone: 'green',
+    },
+    {
+      label: 'Pessoas na instituição',
+      value: members.filter((member) => member.userId !== user.id && membershipIsActive(member))
+        .length,
+      icon: Users,
+      foot: 'Pessoas com acesso',
+      tone: 'blue',
+    },
+    {
+      label: 'Taxa de abertura',
+      value: `${receiptTotal ? Math.round((openedTotal / receiptTotal) * 100) : 0}%`,
+      icon: Eye,
+      foot: `${openedTotal} de ${receiptTotal} entregas abertas`,
+      tone: 'purple',
+    },
+    {
+      label: 'Confirmações pendentes',
+      value: published.reduce(
+        (total, notice) =>
+          total +
+          (notice.requiresConfirmation
+            ? notice.receipts.filter((receipt) => !receipt.confirmedAt).length
+            : 0),
+        0,
+      ),
+      icon: Clock,
+      foot: 'Aguardando ciência dos usuários',
+      tone: 'orange',
+    },
+  ];
   return (
     <>
       <div className="stats-grid">
-        {(manager
-          ? [
-              {
-                label: 'Notificações publicadas',
-                value: published.length,
-                icon: Send,
-                foot: 'Mensagens em circulação',
-                tone: 'green',
-              },
-              {
-                label: 'Pessoas na instituição',
-                value: members.filter((m) => m.active).length,
-                icon: Users,
-                foot: 'Conectadas à sua comunidade',
-                tone: 'blue',
-              },
-              {
-                label: 'Taxa de abertura',
-                value: `${percent}%`,
-                icon: Eye,
-                foot: `${openedTotal} de ${receiptTotal} entregas abertas`,
-                tone: 'purple',
-              },
-              {
-                label: 'Confirmações pendentes',
-                value: published.reduce(
-                  (a, n) =>
-                    a +
-                    (n.requiresConfirmation ? n.receipts.filter((r) => !r.confirmedAt).length : 0),
-                  0,
-                ),
-                icon: Clock,
-                foot: 'Aguardando ciência dos usuários',
-                tone: 'orange',
-              },
-            ]
-          : [
-              {
-                label: 'Notificações recebidas',
-                value: mine.length,
-                icon: Bell,
-                foot: 'Destinadas a você',
-                tone: 'green',
-              },
-              {
-                label: 'Ainda não abertas',
-                value: unread.length,
-                icon: Mail,
-                foot: 'Fique por dentro',
-                tone: 'blue',
-              },
-              {
-                label: 'Confirmações pendentes',
-                value: pending.length,
-                icon: Clock,
-                foot: 'Precisam da sua atenção',
-                tone: 'orange',
-              },
-            ]
-        ).map((s) => (
-          <article className="stat" key={s.label}>
+        {stats.map((stat) => (
+          <article className="stat" key={stat.label}>
             <div>
-              <span>{s.label}</span>
-              <span className={`stat-icon ${s.tone}`}>
-                <s.icon size={19} />
+              <span>{stat.label}</span>
+              <span className={`stat-icon ${stat.tone}`}>
+                <stat.icon size={19} />
               </span>
             </div>
-            <strong>{s.value}</strong>
-            <small>{s.foot}</small>
+            <strong>{stat.value}</strong>
+            <small>{stat.foot}</small>
           </article>
         ))}
       </div>
@@ -147,15 +76,10 @@ export default function Dashboard({
         <section className="panel">
           <div className="panel-heading">
             <div>
-              <h2>{manager ? 'Últimas notificações' : 'Suas notificações'}</h2>
+              <h2>Últimas notificações</h2>
               <p>A comunicação da escola acontece aqui.</p>
             </div>
-            <button
-              className="text-button"
-              onClick={() => {
-                onNavigate(manager ? 'notices' : 'inbox');
-              }}
-            >
+            <button className="text-button" onClick={() => onNavigate('notices')}>
               Ver todas <ArrowUpRight size={16} />
             </button>
           </div>
@@ -165,8 +89,11 @@ export default function Dashboard({
             userId={user.id}
             onOpen={onOpen}
             onManage={onManage}
-            items={(manager ? published : mine).slice(-5)}
-            personal={!manager}
+            items={[...published]
+              .sort((a, b) =>
+                (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt),
+              )
+              .slice(0, 5)}
           />
         </section>
       </div>
