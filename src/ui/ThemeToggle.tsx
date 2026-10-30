@@ -15,7 +15,6 @@ export default function ThemeToggle() {
       title={dark ? 'Ativar modo claro' : 'Ativar modo escuro'}
     >
       {dark ? <Sun size={18} /> : <Moon size={18} />}
-      <span>{dark ? 'Claro' : 'Escuro'}</span>
     </button>
   );
 }
