@@ -2380,3 +2380,159 @@ html[data-theme='light'] .user-filters button.selected {
     gap: 2px;
   }
 }
+
+/* Responsive layout: preserve readable controls and avoid clipped content. */
+.mobile-scroll-hint,
+.mobile-table-hint {
+  display: none;
+}
+.sidebar {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.admin-stats {
+  max-width: 1000px;
+}
+.admin-stats .stat {
+  min-width: 0;
+}
+.admin-stats .stat > div > span:first-child {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.admin-activity-list li span,
+.admin-activity-list li small {
+  overflow-wrap: anywhere;
+}
+.report-card,
+.report-person,
+.report-person > div,
+.report-metrics > div {
+  min-width: 0;
+}
+.report-institutions span {
+  overflow-wrap: anywhere;
+}
+.report-metrics dt {
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.theme-toggle {
+  top: max(12px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  min-height: 44px;
+}
+.overlay {
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+.modal {
+  max-height: min(90vh, calc(100dvh - 24px));
+  overscroll-behavior: contain;
+}
+.table-wrap {
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+}
+.table-wrap:focus-visible {
+  outline: 2px solid #76bfa5;
+  outline-offset: -2px;
+}
+@media (max-width: 850px) {
+  .report-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-manager-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .sidebar {
+    overflow: visible;
+  }
+  .sidebar nav {
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    padding-bottom: 6px;
+  }
+  .sidebar nav button {
+    scroll-snap-align: start;
+  }
+  .mobile-scroll-hint {
+    display: block;
+    color: #718378;
+    font-size: 11px;
+    margin: 4px 2px 0;
+  }
+  .mobile-table-hint {
+    display: block;
+    color: #718378;
+    font-size: 12px;
+    padding: 12px 17px 0;
+    margin: 0;
+  }
+  .table-wrap table {
+    min-width: 620px;
+    font-size: 13px;
+  }
+  .table-wrap th {
+    font-size: 12px;
+  }
+  .table-wrap th,
+  .table-wrap td {
+    padding: 14px 16px;
+  }
+  .table-wrap .text-button {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  .report-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .report-metrics dt {
+    font-size: 12px;
+  }
+  .stat > small {
+    font-size: 11px;
+  }
+  .modal {
+    max-height: calc(100dvh - max(24px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  }
+  .modal .primary,
+  .modal .secondary {
+    min-height: 44px;
+  }
+  .topbar {
+    min-width: 0;
+  }
+  .topbar > span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .topbar > div {
+    flex-shrink: 0;
+  }
+}
+@media (max-width: 360px) {
+  .report-metrics {
+    grid-template-columns: 1fr;
+  }
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+  .admin-stats .stat {
+    min-height: 100px;
+  }
+  .theme-toggle span {
+    display: none;
+  }
+  .theme-toggle {
+    width: 44px;
+    padding: 0;
+  }
+  .user-header {
+    padding-right: 72px;
+  }
+}

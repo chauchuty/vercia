@@ -572,7 +572,7 @@ export default function App() {
           </select>
         )}
         <span className="nav-label">PRINCIPAL</span>
-        <nav>
+        <nav aria-label="Navegação principal">
           {nav.map((item) => (
             <button
               key={item.id}
@@ -591,6 +591,7 @@ export default function App() {
             </button>
           ))}
         </nav>
+        <small className="mobile-scroll-hint">Deslize o menu para ver mais opções</small>
         <div className="sidebar-bottom">
           <button className="settings-nav" onClick={() => openModal('account')}>
             <Settings size={18} />
@@ -769,7 +770,13 @@ export default function App() {
                       Pessoas da instituição <span className="count">{people.length}</span>
                     </h2>
                   </div>
-                  <div className="table-wrap">
+                  <p className="mobile-table-hint">Deslize a tabela para ver todas as colunas</p>
+                  <div
+                    className="table-wrap"
+                    role="region"
+                    aria-label="Pessoas da instituição"
+                    tabIndex={0}
+                  >
                     <table>
                       <thead>
                         <tr>
@@ -883,77 +890,87 @@ export default function App() {
                       description="Convide uma pessoa usando o e-mail dela."
                     />
                   ) : (
-                    <div className="table-wrap">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>E-mail</th>
-                            <th>Perfil</th>
-                            <th>Validade</th>
-                            <th>Situação</th>
-                            <th>Ações</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {invites.map((i) => (
-                            <tr key={i.id}>
-                              <td>{i.email}</td>
-                              <td>{i.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
-                              <td>{date(i.expiresAt)}</td>
-                              <td>
-                                <span className="badge">
-                                  {i.used
-                                    ? 'Aceito'
-                                    : i.revoked
-                                      ? 'Revogado'
-                                      : validInvite(i)
-                                        ? 'Pendente'
-                                        : 'Expirado'}
-                                </span>
-                              </td>
-                              <td>
-                                {validInvite(i) && (
-                                  <div className="inline-actions">
-                                    <button
-                                      className="text-button"
-                                      onClick={() =>
-                                        run(async () => {
-                                          await navigator.clipboard.writeText(
-                                            `${location.origin}${location.pathname}?invite=${i.id}`,
-                                          );
-                                          notify(
-                                            'Link copiado. Compartilhe com a pessoa convidada.',
-                                          );
-                                        })
-                                      }
-                                    >
-                                      <Copy size={15} />
-                                      Copiar link
-                                    </button>
-                                    <button
-                                      className="text-button danger"
-                                      onClick={() =>
-                                        run(() => {
-                                          manage();
-                                          commit({
-                                            ...data,
-                                            invites: data.invites.map((x) =>
-                                              x.id === i.id ? { ...x, revoked: true } : x,
-                                            ),
-                                          });
-                                        })
-                                      }
-                                    >
-                                      Revogar
-                                    </button>
-                                  </div>
-                                )}
-                              </td>
+                    <>
+                      <p className="mobile-table-hint">
+                        Deslize a tabela para ver todas as colunas
+                      </p>
+                      <div
+                        className="table-wrap"
+                        role="region"
+                        aria-label="Convites da instituição"
+                        tabIndex={0}
+                      >
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>E-mail</th>
+                              <th>Perfil</th>
+                              <th>Validade</th>
+                              <th>Situação</th>
+                              <th>Ações</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody>
+                            {invites.map((i) => (
+                              <tr key={i.id}>
+                                <td>{i.email}</td>
+                                <td>{i.role === 'manager' ? 'Gestor' : 'Usuário'}</td>
+                                <td>{date(i.expiresAt)}</td>
+                                <td>
+                                  <span className="badge">
+                                    {i.used
+                                      ? 'Aceito'
+                                      : i.revoked
+                                        ? 'Revogado'
+                                        : validInvite(i)
+                                          ? 'Pendente'
+                                          : 'Expirado'}
+                                  </span>
+                                </td>
+                                <td>
+                                  {validInvite(i) && (
+                                    <div className="inline-actions">
+                                      <button
+                                        className="text-button"
+                                        onClick={() =>
+                                          run(async () => {
+                                            await navigator.clipboard.writeText(
+                                              `${location.origin}${location.pathname}?invite=${i.id}`,
+                                            );
+                                            notify(
+                                              'Link copiado. Compartilhe com a pessoa convidada.',
+                                            );
+                                          })
+                                        }
+                                      >
+                                        <Copy size={15} />
+                                        Copiar link
+                                      </button>
+                                      <button
+                                        className="text-button danger"
+                                        onClick={() =>
+                                          run(() => {
+                                            manage();
+                                            commit({
+                                              ...data,
+                                              invites: data.invites.map((x) =>
+                                                x.id === i.id ? { ...x, revoked: true } : x,
+                                              ),
+                                            });
+                                          })
+                                        }
+                                      >
+                                        Revogar
+                                      </button>
+                                    </div>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
                   )}
                 </section>
               )}
