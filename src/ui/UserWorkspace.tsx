@@ -129,6 +129,16 @@ export default function UserWorkspace({
               <ul className="personal-notice-list">
                 {visible.map((notice) => {
                   const receipt = notice.receipts.find((r) => r.userId === user.id);
+                  const publishedAt = notice.publishedAt || notice.createdAt;
+                  const publishedDate = new Date(publishedAt);
+                  const today = new Date();
+                  const dateLabel = Number.isNaN(publishedDate.getTime())
+                    ? ''
+                    : publishedDate.toDateString() === today.toDateString()
+                      ? 'Hoje'
+                      : publishedDate
+                          .toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })
+                          .replace('.', '');
                   return (
                     <li key={notice.id}>
                       <button className="personal-notice-card" onClick={() => onOpen(notice)}>
@@ -140,7 +150,10 @@ export default function UserWorkspace({
                           )}
                           {!receipt?.openedAt && <small>Não lida</small>}
                         </span>
-                        <ChevronRight size={20} aria-hidden="true" />
+                        <span className="pixel-notice-meta">
+                          <time dateTime={publishedAt}>{dateLabel}</time>
+                          <ChevronRight size={20} aria-hidden="true" />
+                        </span>
                       </button>
                     </li>
                   );

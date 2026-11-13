@@ -3615,3 +3615,78 @@ html[data-theme='dark'] .pixel-landscape {
   background-position-x: var(--sprite-x);
   background-position-y: calc(var(--sprite-y) - 90px);
 }
+/* Proporções da referência: uma coluna compacta, mesmo em telas largas. */
+.pixel-header,
+.pixel-content,
+.pixel-bottom {
+  width: min(100%, 430px);
+}
+.pixel-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 14px 0;
+}
+.pixel-header {
+  padding: 14px 16px 10px;
+}
+.pixel-hero {
+  min-height: 130px;
+}
+.pixel-section {
+  margin: 4px 2px 8px;
+}
+.pixel-section h1 {
+  font-size: 23px;
+}
+.pixel-workspace .personal-notice-card {
+  min-height: 70px;
+  padding: 10px 12px;
+}
+.pixel-notice-meta {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  color: var(--subtle);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.pixel-notice-meta svg {
+  color: var(--text);
+}
+.pixel-landscape {
+  flex: none;
+  margin-top: auto;
+  padding-top: 16px;
+  height: 120px;
+}
+.pixel-landscape > div {
+  background-position-y: calc(var(--sprite-y) - min(23vw, 90px));
+}
+.pixel-bottom {
+  position: sticky;
+  bottom: 0;
+  left: auto;
+  transform: none;
+  margin: auto auto 0;
+}
+.pixel-workspace {
+  padding-bottom: 0;
+}
+.pixel-workspace .user-empty {
+  padding: 35px 12px;
+}
+@media (max-width: 340px) {
+  .pixel-notice-meta {
+    font-size: 9px;
+  }
+  .pixel-header,
+  .pixel-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+.pixel-institution {
+  align-self: flex-start;
+}
