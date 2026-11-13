@@ -161,6 +161,9 @@ export default function UserWorkspace({
                 </p>
               </div>
             )}
+            <div className="pixel-landscape" aria-hidden="true">
+              <div />
+            </div>
           </>
         )}
       </main>
