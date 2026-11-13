@@ -1,4 +1,6 @@
+import Brand from './Brand';
 import { createInstitution, institutionTextColor } from '../domain/institution';
+import { getInstitutionTheme } from '../domain/themes';
 import { categoryColor, categoryIcon } from './categoryIcons';
 import AccountDialog from './dialogs/AccountDialog';
 import ArchiveDialog from './dialogs/ArchiveDialog';
@@ -20,7 +22,7 @@ import { Pagination } from './Pagination';
 import AdminScreen from './AdminScreen';
 import NoticeTable from './NoticeTable';
 import { Empty } from './components';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
 import {
   Bell,
   LayoutDashboard,
@@ -589,14 +591,19 @@ export default function App() {
       </>
     );
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell themed-manager"
+      style={
+        {
+          '--accent': getInstitutionTheme(institution?.theme).color,
+          '--theme-pale': getInstitutionTheme(institution?.theme).pale,
+          '--sprite-x': `${((getInstitutionTheme(institution?.theme).index % 4) * 100) / 3}%`,
+          '--sprite-y': `${Math.floor(getInstitutionTheme(institution?.theme).index / 4) * 50}%`,
+        } as CSSProperties
+      }
+    >
       <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-icon">
-            <Bell size={22} />
-          </span>
-          vercia<span className="brand-dot">.</span>
-        </div>
+        <Brand />
         <button
           type="button"
           className="institution institution-edit"

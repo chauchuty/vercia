@@ -3339,3 +3339,210 @@ html[data-theme='light'] .pixel-workspace .personal-notice-card {
 .pixel-workspace .personal-notice-card .pixel-notice-text small {
   flex: 0 0 auto;
 }
+
+/* Linguagem visual compartilhada: superfícies claras, azul e formas suaves. */
+.vercia-brand {
+  color: #10294b;
+  font-family: Manrope, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  line-height: 1;
+}
+.vercia-brand span {
+  color: #1768c5;
+}
+html[data-theme='light'] {
+  --ink: #142e4b;
+  --line: #dce9f4;
+  --muted: #63788b;
+  color: #142e4b;
+  background: #eef7ff;
+}
+html[data-theme='light'] .workspace,
+html[data-theme='light'] .auth-main {
+  background: #eef7ff;
+  color: #142e4b;
+}
+html[data-theme='light'] .sidebar,
+html[data-theme='light'] .topbar,
+html[data-theme='light'] .standalone-topbar {
+  background: #f9fcff;
+  border-color: #dce9f4;
+}
+html[data-theme='light'] .panel,
+html[data-theme='light'] .stat,
+html[data-theme='light'] .modal,
+html[data-theme='light'] .institution-preview,
+html[data-theme='light'] .local-card {
+  background: #fff;
+  border-color: #dce9f4;
+  box-shadow: 0 4px 18px #1d5d9510;
+}
+html[data-theme='light'] .muted,
+html[data-theme='light'] .help,
+html[data-theme='light'] .page-heading p {
+  color: #60758a;
+}
+html[data-theme='light'] input,
+html[data-theme='light'] select,
+html[data-theme='light'] textarea {
+  background: #fff;
+  border-color: #c9deed;
+  color: #18324f;
+}
+html[data-theme='light'] .sidebar nav button {
+  color: #506b84;
+}
+html[data-theme='light'] .sidebar nav button:hover {
+  background: #edf6ff;
+}
+html[data-theme='light'] .primary:hover {
+  background: #1059aa;
+}
+html[data-theme='light'] .secondary {
+  color: #214666;
+  border-color: #c9deed;
+}
+html[data-theme='light'] .topbar strong,
+html[data-theme='light'] .person-cell strong {
+  color: #173a5c;
+}
+html[data-theme='light'] .auth-form {
+  background: #fff;
+  padding: 34px;
+  border: 1px solid #d9eafa;
+  border-radius: 20px;
+  box-shadow: 0 16px 50px #2267a115;
+  width: min(100%, 430px);
+}
+html[data-theme='light'] .auth-form .vercia-brand {
+  margin-bottom: 28px;
+}
+html[data-theme='light'] .institution-picker .auth-form {
+  width: min(100%, 520px);
+}
+html[data-theme='light'] .auth-main {
+  background-image:
+    radial-gradient(circle at 15% 20%, #d9efff 0, transparent 30%),
+    radial-gradient(circle at 85% 85%, #dbefff 0, transparent 34%);
+}
+.sidebar,
+.topbar,
+.panel,
+.stat,
+.modal,
+.primary,
+.secondary,
+input,
+select,
+textarea {
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+.panel,
+.stat,
+.modal {
+  border-radius: 16px;
+}
+.primary,
+.secondary,
+input,
+select,
+textarea {
+  border-radius: 10px;
+}
+.sidebar nav button {
+  border-radius: 10px;
+}
+html[data-theme='dark'] {
+  --ink: #e4f2ff;
+  --line: #304658;
+}
+html[data-theme='dark'] .vercia-brand {
+  color: #f1f8ff;
+}
+html[data-theme='dark'] .vercia-brand span {
+  color: #80bffa;
+}
+html[data-theme='dark'] .auth-main,
+html[data-theme='dark'] .workspace {
+  background: #101d2b;
+  color: #e4f2ff;
+}
+html[data-theme='dark'] .sidebar,
+html[data-theme='dark'] .topbar,
+html[data-theme='dark'] .standalone-topbar {
+  background: #162838;
+  border-color: #304658;
+}
+html[data-theme='dark'] .panel,
+html[data-theme='dark'] .stat,
+html[data-theme='dark'] .modal,
+html[data-theme='dark'] .local-card {
+  background: #1a3043;
+  border-color: #365168;
+  color: #e4f2ff;
+}
+html[data-theme='dark'] .muted,
+html[data-theme='dark'] .help,
+html[data-theme='dark'] .page-heading p {
+  color: #b5c8d8;
+}
+html[data-theme='dark'] .auth-form {
+  background: #1a3043;
+  padding: 34px;
+  border: 1px solid #365168;
+  border-radius: 20px;
+  width: min(100%, 430px);
+}
+html[data-theme='dark'] .auth-form .vercia-brand {
+  margin-bottom: 28px;
+}
+html[data-theme='dark'] input,
+html[data-theme='dark'] select,
+html[data-theme='dark'] textarea {
+  background: #142636;
+  color: #f3f8fc;
+  border-color: #486278;
+}
+@media (max-width: 600px) {
+  .auth-main {
+    padding: 24px 16px;
+  }
+  html[data-theme] .auth-form {
+    padding: 24px 20px;
+  }
+}
+html[data-theme='light'] .themed-manager .workspace {
+  background: var(--theme-pale);
+}
+html[data-theme='light'] .themed-manager .primary {
+  background: var(--accent);
+}
+html[data-theme='light'] .themed-manager .sidebar nav button.active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, white);
+}
+.themed-manager .sidebar-bottom::before {
+  content: '';
+  display: block;
+  width: 112px;
+  height: 84px;
+  margin: 0 auto 10px;
+  background: url('../assets/temas-pixel.png') var(--sprite-x) var(--sprite-y) / 400% 300%;
+  image-rendering: pixelated;
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+}
+html[data-theme='dark'] .themed-manager .sidebar-bottom::before {
+  mix-blend-mode: normal;
+  border-radius: 12px;
+  opacity: 0.65;
+}
+@media (max-height: 700px), (max-width: 800px) {
+  .themed-manager .sidebar-bottom::before {
+    display: none;
+  }
+}

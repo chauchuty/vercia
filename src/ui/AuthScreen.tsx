@@ -1,7 +1,8 @@
+import Brand from './Brand';
 import ThemeToggle from './ThemeToggle';
 import PasswordInput from './PasswordInput';
 import type { FormEvent, ReactNode } from 'react';
-import { ArrowUpRight, Bell } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import type { Database, Invite, User } from '../domain/models';
 import { validInvite } from '../application/service';
 interface Props {
@@ -33,12 +34,7 @@ export default function AuthScreen({
       </header>
       <main className="auth-main">
         <div className="auth-form">
-          <div className="brand auth-brand">
-            <span className="brand-icon">
-              <Bell size={20} />
-            </span>
-            vercia<span className="brand-dot">.</span>
-          </div>
+          <Brand />
 
           <h1>{inviteToken ? 'Você foi convidado' : 'Entrar'}</h1>
           <p className="muted">

@@ -1,6 +1,6 @@
+import Brand from './Brand';
 import { useState, type FormEvent, type ReactNode } from 'react';
 import {
-  Bell,
   Building2,
   ChartNoAxesCombined,
   LayoutDashboard,
@@ -55,12 +55,7 @@ export default function AdminScreen({
   return (
     <div className="app-shell admin-shell">
       <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-icon">
-            <Bell size={22} />
-          </span>
-          vercia<span className="brand-dot">.</span>
-        </div>
+        <Brand />
         <div className="admin-sidebar-title">
           <span className="eyebrow">ADMINISTRAÇÃO</span>
         </div>
