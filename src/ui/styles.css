@@ -3035,3 +3035,307 @@ html[data-theme='dark'] .recipient-selection-count {
 .conversation-accordion > .help {
   margin: 0 0 14px;
 }
+
+/* Identidade Vercia: temas por instituição e dashboard mobile. */
+:root {
+  --green: #1768c5;
+  --ink: #122a48;
+  --line: #dce8f2;
+}
+.pixel-workspace {
+  --surface: #fff;
+  --text: #10243d;
+  --subtle: #536b83;
+  min-height: 100dvh;
+  background: var(--theme-pale) !important;
+  color: var(--text);
+  padding-bottom: 88px;
+}
+.pixel-header {
+  max-width: 720px;
+  margin: auto;
+  padding: 15px 20px;
+  background: transparent !important;
+  border: 0;
+  gap: 10px;
+}
+.pixel-logo {
+  margin-right: auto;
+  color: #142d50;
+  font-size: 24px;
+  letter-spacing: -1px;
+  font-weight: 800;
+}
+.pixel-logo span {
+  color: var(--accent);
+}
+.pixel-header .theme-toggle {
+  position: static;
+  transform: none;
+  width: 40px;
+  height: 40px;
+}
+.pixel-header .user-account {
+  margin: 0;
+  background: var(--surface);
+  color: var(--accent);
+}
+.pixel-content {
+  padding: 0 20px 34px;
+}
+.pixel-institution {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 20px;
+  color: var(--text);
+  background: var(--surface);
+  font-size: 12px;
+  max-width: 100%;
+}
+.pixel-institution svg {
+  color: var(--accent);
+  flex: none;
+}
+.pixel-institution select {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  width: auto;
+  max-width: 230px;
+  font-size: 12px;
+}
+.pixel-hero {
+  min-height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.pixel-hero > div:first-child {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.pixel-hero p {
+  font-family: Manrope, sans-serif;
+  color: var(--text);
+  font-weight: 800;
+  font-size: 25px;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+.pixel-pending {
+  border-radius: 20px;
+  min-height: 34px;
+  padding: 6px 10px;
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+.pixel-art {
+  flex: 0 0 145px;
+  width: 145px;
+  height: 118px;
+  background-image: url('./../assets/temas-pixel.png');
+  background-size: 400% 300%;
+  background-position: var(--sprite-x) var(--sprite-y);
+  mix-blend-mode: multiply;
+  image-rendering: pixelated;
+}
+.pixel-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 10px;
+}
+.pixel-section h1 {
+  margin: 0;
+  font-size: 22px;
+  color: var(--text);
+}
+.pixel-section span {
+  color: var(--subtle);
+  font-size: 11px;
+}
+.pixel-workspace .user-filters {
+  margin: 0 0 12px;
+  gap: 6px;
+}
+.pixel-workspace .user-filters button {
+  min-height: 38px;
+  flex: 1;
+  padding: 0 8px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow: 0 2px 4px #18324a0c;
+}
+.pixel-workspace .user-filters button.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.pixel-workspace .personal-notice-list {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pixel-workspace .personal-notice-card {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: 0 2px 6px #18324a12;
+  text-align: left;
+}
+.pixel-notice-text {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+.pixel-notice-text strong {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+.pixel-notice-text small {
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 13%, var(--surface));
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+}
+.pixel-bottom {
+  position: fixed;
+  z-index: 4;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 720px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 8px 18px max(8px, env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.pixel-bottom button {
+  min-height: 55px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+}
+.pixel-bottom button.active {
+  color: #fff;
+  background: var(--accent);
+}
+html[data-theme='dark'] .pixel-workspace {
+  --surface: #1a2a39;
+  --text: #f2f7fb;
+  --subtle: #b5c5d4;
+  background: #101d2b !important;
+}
+html[data-theme='dark'] .pixel-logo {
+  color: #f2f7fb;
+}
+html[data-theme='dark'] .pixel-logo span,
+html[data-theme='dark'] .pixel-institution svg {
+  color: #9dcdf9;
+}
+html[data-theme='dark'] .pixel-pending,
+html[data-theme='dark'] .pixel-notice-text small {
+  background: #304a60;
+  color: #d5ecff;
+}
+html[data-theme='dark'] .pixel-art {
+  mix-blend-mode: normal;
+  border-radius: 14px;
+  opacity: 0.88;
+}
+html[data-theme='dark'] .pixel-workspace .user-filters button {
+  color: var(--text);
+  background: var(--surface);
+}
+html[data-theme='dark'] .pixel-workspace .user-filters button.selected {
+  background: var(--accent);
+  color: #fff;
+}
+html[data-theme='dark'] .pixel-workspace .personal-notice-card {
+  background: var(--surface);
+  color: var(--text);
+}
+@media (max-width: 340px) {
+  .pixel-art {
+    flex-basis: 110px;
+    width: 110px;
+    height: 95px;
+  }
+  .pixel-hero p {
+    font-size: 21px;
+  }
+}
+/* Cores compartilhadas pelas áreas administrativas e formulários. */
+html[data-theme='light'] .primary {
+  background: #1768c5;
+  color: #fff;
+}
+html[data-theme='light'] .text-button {
+  color: #1768c5;
+}
+html[data-theme='light'] .sidebar nav button.active,
+html[data-theme='light'] .tabs button.selected {
+  background: #e2f1ff;
+  color: #1459a5;
+}
+html[data-theme='dark'] .primary {
+  background: #377bc2;
+  color: #fff;
+}
+html[data-theme='dark'] .text-button {
+  color: #a4d0fa;
+}
+html[data-theme='dark'] .sidebar nav button.active,
+html[data-theme='dark'] .tabs button.selected {
+  background: #25486b;
+  color: #ecf7ff;
+}
+html[data-theme='light'] .pixel-workspace .user-filters button.selected {
+  background: var(--accent);
+  color: #fff;
+}
+html[data-theme='light'] .pixel-workspace .personal-notice-card {
+  background: var(--surface);
+}
+.pixel-workspace .personal-notice-card .pixel-notice-text {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.pixel-workspace .personal-notice-card .pixel-notice-text strong {
+  flex: 0 0 100%;
+}
+.pixel-workspace .personal-notice-card .pixel-notice-text small {
+  flex: 0 0 auto;
+}

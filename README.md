@@ -66,4 +66,4 @@ A versão 2 do armazenamento substitui a base local anterior uma única vez: rem
 
 Instituições cadastradas antes da inclusão de sigla e cor são preservadas: recebem uma sigla derivada do nome e a cor verde padrão. Nenhuma base é reiniciada por esta feature.
 
-O tema escuro é o padrão; as preferências de tema claro ou escuro são salvas neste navegador. Administradores não participam de instituições; gestores podem criar e administrar várias instituições. Convites antigos de gestor não podem mais ser aceitos.
+O tema claro é o padrão; as preferências de tema claro ou escuro são salvas neste navegador. Gestores podem escolher entre 12 temáticas visuais para cada instituição; o dashboard do usuário aplica a ilustração e a paleta da instituição selecionada. Administradores não participam de instituições; gestores podem criar e administrar várias instituições. Convites antigos de gestor não podem mais ser aceitos.

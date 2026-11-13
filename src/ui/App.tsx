@@ -208,6 +208,7 @@ export default function App() {
       const id = uid();
       const newInstitution = {
         ...createInstitution(id, name, input(f, 'acronym'), input(f, 'color')),
+        theme: input(f, 'theme') || 'generic',
         ...institutionContact(f),
       };
       commit({
@@ -431,6 +432,7 @@ export default function App() {
                       input(form, 'color'),
                     ),
                     ...institutionContact(form),
+                    theme: input(form, 'theme') || 'generic',
                   };
                   commit({
                     ...data,

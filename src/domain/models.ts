@@ -17,6 +17,7 @@ export interface ManagerActivity {
 }
 export interface Institution {
   id: string;
+  theme?: string;
   name: string;
   acronym: string;
   color: string;

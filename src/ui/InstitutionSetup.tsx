@@ -4,6 +4,7 @@ import { DEFAULT_INSTITUTION_COLOR, institutionTextColor } from '../domain/insti
 import { Building2, LogOut } from 'lucide-react';
 import type { User, Institution } from '../domain/models';
 import ColorSlider from './ColorSlider';
+import { institutionThemes } from '../domain/themes';
 interface Props {
   user: User;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -73,6 +74,19 @@ export default function InstitutionSetup({
                 <ColorSlider name="color" value={color} onChange={setColor} />
               </label>
             </div>
+            <label>
+              Temática visual
+              <select name="theme" defaultValue={institution?.theme || 'generic'}>
+                {institutionThemes.map((theme) => (
+                  <option key={theme.id} value={theme.id}>
+                    {theme.label}
+                  </option>
+                ))}
+              </select>
+              <small className="help">
+                Define as cores e a ilustração exibidas para as pessoas desta instituição.
+              </small>
+            </label>
             <label>
               Telefone
               <input
