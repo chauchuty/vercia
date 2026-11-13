@@ -56,7 +56,7 @@ Com o servidor de desenvolvimento ativo em `http://localhost:5173`, execute:
 npm run test:e2e
 ```
 
-O teste usa Chromium em `/usr/bin/chromium`. Em outro ambiente, informe o caminho com `CHROMIUM_PATH=/caminho/para/chromium npm run test:e2e`. Ele utiliza um contexto isolado e descarta seus dados ao encerrar, sem preencher a base de uso da aplicação. Verifica configuração inicial, categorias, convite, cadastro, login, segmentação, abertura, confirmação, persistência, troca de senha e uso em celular. Capturas ficam em `work/`, ignorada pelo Git.
+O teste usa Chromium em `/usr/bin/chromium`. Em outro ambiente, informe o caminho com `CHROMIUM_PATH=/caminho/para/chromium npm run test:e2e`. Ele utiliza um contexto isolado e descarta seus dados ao encerrar, sem preencher a base de uso da aplicação. Verifica login, abertura, confirmação de ciência, persistência, modo escuro e layout em celular com dados de teste isolados. Capturas ficam em `work/`, ignorada pelo Git.
 
 O GitHub Actions valida TypeScript, build, testes de regras e formatação a cada push e pull request.
 

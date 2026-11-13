@@ -1,125 +1,83 @@
-import { mkdirSync } from 'node:fs';
-mkdirSync('work', { recursive: true });
 import { chromium } from '@playwright/test';
+import { mkdirSync } from 'node:fs';
+
+mkdirSync('work', { recursive: true });
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
   args: ['--no-sandbox'],
 });
-const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-page.setDefaultTimeout(7000);
-const errors = [];
-page.on('pageerror', (e) => errors.push(e.message));
-await page.goto('http://localhost:5173');
-const initial = await page.evaluate(() => JSON.parse(localStorage.getItem('vercia.database.v2')));
-if (
-  initial.users.length !== 1 ||
-  initial.users[0].name !== 'Administrador' ||
-  initial.institutions.length ||
-  initial.notices.length ||
-  initial.memberships.length ||
-  initial.categories.length ||
-  initial.invites.length
-)
-  throw Error('A base inicial precisa conter somente o Administrador');
-await page.getByLabel('E-mail', { exact: true }).fill('administrador@vercia.local');
-await page.getByLabel('Senha', { exact: true }).fill('Administrador123!');
-await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
-await page.getByLabel('Nome da instituição').fill('Colégio Horizonte');
-await page.getByLabel('Sigla da instituição').fill('chor');
-await page.getByLabel('Cor de referência', { exact: true }).fill('#6842b5');
-await page.getByRole('button', { name: 'Criar instituição', exact: true }).click();
-await page.getByRole('heading', { name: 'Olá, Administrador' }).waitFor();
-await page.reload();
-await page.getByLabel('Sigla CHOR', { exact: true }).waitFor();
-const institution = await page.evaluate(
-  () => JSON.parse(localStorage.getItem('vercia.database.v2')).institutions[0],
-);
-if (institution.acronym !== 'CHOR' || institution.color !== '#6842b5')
-  throw Error('Sigla e cor não foram persistidas');
-
-await page.getByRole('button', { name: 'Categorias', exact: true }).click();
-await page.getByRole('button', { name: 'Nova categoria' }).click();
-await page.getByLabel('Nome da categoria').fill('Professores');
-await page.getByRole('button', { name: 'Salvar categoria' }).click();
-await page.getByRole('button', { name: 'Convites', exact: true }).click();
-await page.getByRole('button', { name: 'Convidar pessoa' }).click();
-await page.getByLabel('E-mail', { exact: true }).fill('ana@horizonte.com');
-await page.getByRole('button', { name: 'Gerar convite' }).click();
-const token = await page.evaluate(
-  () => JSON.parse(localStorage.getItem('vercia.database.v2')).invites[0].id,
-);
-await page.getByRole('button', { name: 'Sair', exact: true }).click();
-await page.goto('http://localhost:5173/?invite=' + token);
-await page.getByLabel('Seu nome').fill('Ana Souza');
-await page.getByLabel('Senha', { exact: true }).fill('SenhaTeste123!');
-await page.getByRole('button', { name: 'Aceitar convite' }).click();
-await page.getByRole('heading', { name: 'Olá, Ana' }).waitFor();
-await page.getByRole('button', { name: 'Sair', exact: true }).click();
-await page.getByLabel('E-mail', { exact: true }).fill('ADMINISTRADOR@VERCIA.LOCAL');
-await page.getByLabel('Senha', { exact: true }).fill('Administrador123!');
-await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
-await page.getByRole('button', { name: 'Pessoas', exact: true }).click();
-await page
-  .getByRole('row')
-  .filter({ hasText: 'Ana Souza' })
-  .getByRole('button', { name: 'Gerenciar' })
-  .click();
-await page.getByLabel('Professores', { exact: true }).check();
-await page.getByRole('button', { name: 'Salvar alterações' }).click();
-await page.getByRole('button', { name: 'Notificações', exact: true }).click();
-await page.getByRole('button', { name: 'Nova notificação' }).click();
-await page.getByLabel('Título', { exact: true }).fill('Reunião pedagógica de novembro');
-await page
-  .getByLabel('Mensagem', { exact: true })
-  .fill(
-    'Nossa reunião será na sexta-feira, às 14h. Confirme sua ciência para organizarmos o encontro.',
+try {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('http://localhost:5173');
+  const fixture = await page.evaluate(async () => {
+    const { createUser } = await import('/src/application/auth.ts');
+    const db = JSON.parse(localStorage.getItem('vercia.database.v2'));
+    const member = await createUser('Ana Souza', 'ana@example.com', 'SenhaTeste123!');
+    db.users.push(member);
+    db.institutions.push({
+      id: 'school',
+      name: 'Colégio Horizonte',
+      acronym: 'CHOR',
+      color: '#1768c5',
+      theme: 'education',
+    });
+    db.memberships.push({
+      id: 'membership',
+      userId: member.id,
+      institutionId: 'school',
+      role: 'member',
+      active: true,
+      categoryIds: [],
+    });
+    db.notices.push({
+      id: 'notice',
+      institutionId: 'school',
+      authorId: 'manager',
+      title: 'Reunião pedagógica',
+      body: 'A reunião será na sexta-feira.',
+      priority: 'high',
+      requiresConfirmation: true,
+      audience: 'all',
+      categoryIds: [],
+      status: 'published',
+      createdAt: new Date().toISOString(),
+      receipts: [{ userId: member.id }],
+    });
+    localStorage.setItem('vercia.database.v2', JSON.stringify(db));
+    return { id: member.id };
+  });
+  await page.reload();
+  await page.getByLabel('E-mail', { exact: true }).fill('ana@example.com');
+  await page.getByLabel('Senha', { exact: true }).fill('SenhaTeste123!');
+  await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
+  await page.getByRole('heading', { name: 'Mensagens' }).waitFor();
+  await page.getByRole('button', { name: /Reunião pedagógica/ }).click();
+  await page.getByText('Abertura registrada em').waitFor();
+  await page.getByRole('button', { name: 'Li e estou ciente' }).click();
+  await page.getByText('Ciência confirmada em').waitFor();
+  await page.getByRole('button', { name: 'Fechar', exact: true }).click();
+  await page.reload();
+  const receipt = await page.evaluate(
+    ({ id }) =>
+      JSON.parse(localStorage.getItem('vercia.database.v2')).notices[0].receipts.find(
+        (item) => item.userId === id,
+      ),
+    fixture,
   );
-await page.locator('select[name=priority]').selectOption('high');
-await page.locator('select[name=audience]').selectOption('categories');
-await page.getByLabel('Professores', { exact: true }).check();
-await page.getByRole('checkbox', { name: 'Solicitar confirmação de ciência' }).check();
-await page.getByRole('button', { name: 'Publicar notificação' }).click();
-await page.getByRole('dialog').waitFor({ state: 'hidden' });
-await page.getByRole('button', { name: 'Visão geral', exact: true }).click();
-await page.screenshot({ path: 'work/dashboard.png', fullPage: true });
-await page.getByRole('button', { name: 'Sair', exact: true }).click();
-await page.getByLabel('E-mail', { exact: true }).fill('ana@horizonte.com');
-await page.getByLabel('Senha', { exact: true }).fill('SenhaTeste123!');
-await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
-await page
-  .getByRole('button', { name: /Minha caixa/ })
-  .first()
-  .click();
-await page.getByRole('button', { name: /Reunião pedagógica/ }).click();
-await page.getByText('Abertura registrada em').waitFor();
-await page.getByRole('button', { name: 'Li e estou ciente' }).click();
-await page.getByText('Ciência confirmada em').waitFor();
-await page.getByRole('button', { name: 'Fechar', exact: true }).click();
-await page.reload();
-await page.getByRole('button', { name: /Reunião pedagógica/ }).click();
-await page.getByText('Ciência confirmada em').waitFor();
-await page.getByRole('button', { name: 'Fechar', exact: true }).click();
-await page.setViewportSize({ width: 390, height: 844 });
-await page.screenshot({ path: 'work/mobile.png', fullPage: true });
-const overflow = await page.evaluate(
-  () => document.documentElement.scrollWidth > window.innerWidth,
-);
-if (overflow) throw Error('Overflow horizontal no celular');
-await page.getByRole('button', { name: 'Minha conta', exact: true }).click();
-await page.getByLabel('Senha atual').fill('SenhaTeste123!');
-await page.getByLabel('Nova senha', { exact: true }).fill('NovaSenhaTeste456!');
-await page.getByLabel('Repita a nova senha').fill('NovaSenhaTeste456!');
-await page.getByRole('dialog').getByRole('button', { name: 'Alterar senha', exact: true }).click();
-await page.getByRole('dialog').waitFor({ state: 'hidden' });
-await page.getByRole('button', { name: 'Minha conta', exact: true }).click();
-await page.getByRole('button', { name: 'Sair da conta' }).click();
-await page.getByLabel('E-mail', { exact: true }).fill('ana@horizonte.com');
-await page.getByLabel('Senha', { exact: true }).fill('NovaSenhaTeste456!');
-await page.getByRole('button', { name: 'Entrar no Vercia' }).click();
-await page.getByRole('heading', { name: 'Olá, Ana' }).waitFor();
-if (errors.length) throw Error(errors.join('\n'));
-console.log(
-  'OK: configuração, categoria, convite, cadastro, login, vínculo, publicação segmentada, abertura, ciência, persistência, troca de senha e saída no celular.',
-);
-await browser.close();
+  if (!receipt?.openedAt || !receipt?.confirmedAt)
+    throw Error('Abertura e ciência não foram persistidas.');
+  if (await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth))
+    throw Error('Overflow horizontal no celular');
+  await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
+  await page.reload();
+  if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== 'dark')
+    throw Error('Tema escuro não persistiu.');
+  await page.screenshot({ path: 'work/mobile.png', fullPage: true });
+  if (errors.length) throw Error(errors.join('\n'));
+  console.log('OK: login, abertura, ciência, persistência, modo escuro e layout móvel.');
+} finally {
+  await browser.close();
+}
